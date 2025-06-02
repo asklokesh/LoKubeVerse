@@ -1,5 +1,23 @@
-version: '3.8'
 services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
   db:
     image: postgres:15
     environment:
@@ -17,10 +35,14 @@ services:
     command: uvicorn main:app --reload --host 0.0.0.0 --port 8000
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/k8s_dash
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://admin:admin123@rabbitmq:5672/
     ports:
       - '8000:8000'
     depends_on:
       - db
+      - redis
+      - rabbitmq
     volumes:
       - ./backend:/app
 
@@ -34,6 +56,10 @@ services:
       - backend
     volumes:
       - ./frontend:/app
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
 
 volumes:
-  pgdata: 
+  pgdata:
+  redis_data:
+  rabbitmq_data: 

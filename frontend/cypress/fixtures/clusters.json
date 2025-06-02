@@ -1,0 +1,29 @@
+[
+    {
+        "id": "cluster-1",
+        "name": "AWS Production",
+        "provider": "aws",
+        "region": "us-west-2",
+        "status": "active",
+        "nodeCount": 5,
+        "version": "v1.28.0"
+    },
+    {
+        "id": "cluster-2",
+        "name": "Azure Staging",
+        "provider": "azure",
+        "region": "eastus",
+        "status": "active",
+        "nodeCount": 3,
+        "version": "v1.27.0"
+    },
+    {
+        "id": "cluster-3",
+        "name": "GCP Development",
+        "provider": "gcp",
+        "region": "us-central1",
+        "status": "active",
+        "nodeCount": 2,
+        "version": "v1.28.0"
+    }
+]

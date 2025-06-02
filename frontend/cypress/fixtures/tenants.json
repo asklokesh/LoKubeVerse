@@ -1,0 +1,20 @@
+[
+    {
+        "id": "tenant-1",
+        "name": "Acme Corp",
+        "plan": "enterprise",
+        "active": true
+    },
+    {
+        "id": "tenant-2",
+        "name": "Beta Inc",
+        "plan": "professional",
+        "active": true
+    },
+    {
+        "id": "tenant-3",
+        "name": "Gamma LLC",
+        "plan": "starter",
+        "active": false
+    }
+]

@@ -1,0 +1,32 @@
+[
+    {
+        "id": "deploy-1",
+        "name": "frontend-app",
+        "cluster": "cluster-1",
+        "namespace": "production",
+        "image": "nginx:1.21",
+        "status": "running",
+        "replicas": 3,
+        "createdAt": "2024-01-15T10:00:00Z"
+    },
+    {
+        "id": "deploy-2",
+        "name": "backend-api",
+        "cluster": "cluster-1",
+        "namespace": "production",
+        "image": "node:18-alpine",
+        "status": "running",
+        "replicas": 2,
+        "createdAt": "2024-01-15T09:30:00Z"
+    },
+    {
+        "id": "deploy-3",
+        "name": "database",
+        "cluster": "cluster-2",
+        "namespace": "staging",
+        "image": "postgres:13",
+        "status": "running",
+        "replicas": 1,
+        "createdAt": "2024-01-15T09:00:00Z"
+    }
+]

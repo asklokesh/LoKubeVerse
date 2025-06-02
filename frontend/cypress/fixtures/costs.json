@@ -1,0 +1,51 @@
+{
+    "totalCost": 2845.67,
+    "currency": "USD",
+    "period": "monthly",
+    "breakdown": {
+        "compute": 1850.25,
+        "storage": 520.50,
+        "network": 275.80,
+        "other": 199.12
+    },
+    "byCluster": [
+        {
+            "clusterId": "cluster-1",
+            "name": "AWS Production",
+            "cost": 1580.30,
+            "provider": "aws"
+        },
+        {
+            "clusterId": "cluster-2",
+            "name": "Azure Staging",
+            "cost": 890.45,
+            "provider": "azure"
+        },
+        {
+            "clusterId": "cluster-3",
+            "name": "GCP Development",
+            "cost": 374.92,
+            "provider": "gcp"
+        }
+    ],
+    "trends": {
+        "daily": [
+            120,
+            135,
+            142,
+            158,
+            145,
+            160,
+            155
+        ],
+        "labels": [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat",
+            "Sun"
+        ]
+    }
+}

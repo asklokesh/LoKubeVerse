@@ -5,7 +5,9 @@ from typing import List
 import uuid
 
 from db import get_db
-from routers import auth, cluster, monitoring, deployment, gateway
+from routers import auth, cluster, monitoring, deployment, gateway, namespace
+import schemas
+import crud
 
 app = FastAPI()
 
@@ -22,6 +24,7 @@ app.include_router(cluster.router, prefix="/api/clusters", tags=["clusters"])
 app.include_router(monitoring.router, prefix="/api/monitoring", tags=["monitoring"])
 app.include_router(deployment.router, prefix="/api/deployments", tags=["deployments"])
 app.include_router(gateway.router, prefix="/api/gateway", tags=["gateway"])
+app.include_router(namespace.router, prefix="/api/namespaces", tags=["namespaces"])
 
 @app.get("/")
 def read_root():

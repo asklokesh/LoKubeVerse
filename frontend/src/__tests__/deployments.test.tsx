@@ -47,9 +47,9 @@ describe('Deployment Components', () => {
     mockedAxios.get.mockResolvedValueOnce({ data: mockClusters });
 
     render(<CreateDeploymentForm />);
-    expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
+    expect(screen.getByLabelText('Name')).toBeInTheDocument();
     expect(screen.getByLabelText(/cluster/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/namespace/i)).toBeInTheDocument();
+    expect(screen.getByLabelText('Namespace')).toBeInTheDocument();
     expect(screen.getByLabelText(/image/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /create/i })).toBeInTheDocument();
   });
@@ -57,7 +57,7 @@ describe('Deployment Components', () => {
   it('handles deployment creation', async () => {
     const mockClusters = [
       {
-        id: '1',
+        id: 'cluster-1',
         name: 'Test Cluster',
         provider: 'aws',
         region: 'us-west-2',
@@ -65,7 +65,15 @@ describe('Deployment Components', () => {
       },
     ];
 
-    mockedAxios.get.mockResolvedValueOnce({ data: mockClusters });
+    mockedAxios.get.mockImplementation((url) => {
+      if (url === '/api/clusters') {
+        return Promise.resolve({ data: mockClusters });
+      }
+      if (url === '/api/deployments') {
+        return Promise.resolve({ data: [] });
+      }
+      return Promise.reject(new Error('Not found'));
+    });
     mockedAxios.post.mockResolvedValueOnce({
       data: {
         id: '1',
@@ -78,13 +86,20 @@ describe('Deployment Components', () => {
     });
 
     render(<CreateDeploymentForm />);
-    fireEvent.change(screen.getByLabelText(/name/i), {
+
+    // Wait for clusters to load and populate the select
+    await waitFor(() => {
+      const clusterSelect = screen.getByLabelText(/cluster/i) as HTMLSelectElement;
+      expect(clusterSelect.options.length).toBeGreaterThan(1);
+    }, { timeout: 2000 });
+
+    fireEvent.change(screen.getByLabelText('Name'), {
       target: { value: 'New Deployment' },
     });
     fireEvent.change(screen.getByLabelText(/cluster/i), {
       target: { value: 'cluster-1' },
     });
-    fireEvent.change(screen.getByLabelText(/namespace/i), {
+    fireEvent.change(screen.getByLabelText('Namespace'), {
       target: { value: 'default' },
     });
     fireEvent.change(screen.getByLabelText(/image/i), {
