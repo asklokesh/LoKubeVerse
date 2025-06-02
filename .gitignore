@@ -1,0 +1,135 @@
+.env
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Database
+*.sqlite3
+*.db
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# Frontend
+node_modules/
+.next/
+out/
+build/
+dist/
+.nuxt/
+.cache/
+
+# Misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+# Kubernetes
+kubeconfig
+*.kubeconfig
+.kube/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+coverage.xml
+*.cover
+.hypothesis/
+
+# Node
+.npm
+.eslintcache
+.stylelintcache
+.yarn-integrity
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Build artifacts
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.dylib
+*.dll
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*~
+
+# IDE specific
+.project
+.classpath
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# OS generated
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Application specific
+pgdata/
+*.pid
+*.seed
+*.pid.lock

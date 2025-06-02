@@ -1,0 +1,9 @@
+fastapi[all]
+uvicorn
+psycopg2-binary
+redis
+pika
+sqlalchemy
+alembic
+passlib[bcrypt]
+python-jose[cryptography] 
