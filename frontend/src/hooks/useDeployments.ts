@@ -58,6 +58,20 @@ export const useDeployments = () => {
     }
   };
 
+  const updateDeployment = async (id: string, data: Partial<Deployment>) => {
+    try {
+      const response = await axios.put<Deployment>(`/api/deployments/${id}`, data);
+      setDeployments((prev) =>
+        prev.map((deployment) => deployment.id === id ? response.data : deployment)
+      );
+      return response.data;
+    } catch (err) {
+      const errorMessage = getErrorMessage(err, 'Failed to update deployment');
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    }
+  };
+
   const clearError = () => {
     setError(null);
   };
@@ -67,6 +81,7 @@ export const useDeployments = () => {
     loading,
     error,
     createDeployment,
+    updateDeployment,
     deleteDeployment,
     clearError
   };

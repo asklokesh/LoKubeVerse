@@ -7,8 +7,18 @@ import { useDeployments } from '@/hooks/useDeployments';
 import { BlueGreenDeployment } from '@/components/deployments/BlueGreenDeployment';
 import { CanaryDeployment } from '@/components/deployments/CanaryDeployment';
 import { RollbackDeployment } from '@/components/deployments/RollbackDeployment';
+import { LoadingState } from '@/components/common/LoadingState';
+import { PageWrapper } from '@/components/wrappers/PageWrapper';
 
-export default function DeploymentsPage() {
+export default function DeploymentsPageWrapper() {
+  return (
+    <PageWrapper title="Failed to load deployments">
+      <DeploymentsPage />
+    </PageWrapper>
+  );
+}
+
+function DeploymentsPage() {
   const { deployments, loading, error, createDeployment, updateDeployment, deleteDeployment } = useDeployments();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -18,11 +28,7 @@ export default function DeploymentsPage() {
         <Sidebar />
         <main className="flex-1 p-8">
           <div className="max-w-7xl mx-auto">
-            <div className="animate-pulse">
-              <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2 mb-8"></div>
-              <div className="h-96 bg-gray-200 rounded"></div>
-            </div>
+            <LoadingState type="deployments" />
           </div>
         </main>
       </div>
@@ -45,7 +51,7 @@ export default function DeploymentsPage() {
                 <div className="ml-3">
                   <h3 className="text-sm font-medium text-red-800">Error loading deployments</h3>
                   <div className="mt-2 text-sm text-red-700">
-                    <p>{error.message}</p>
+                    <p>{typeof error === 'string' ? error : (error as Error)?.message || 'An unknown error occurred'}</p>
                   </div>
                 </div>
               </div>

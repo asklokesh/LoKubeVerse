@@ -57,7 +57,7 @@ export const useClusters = () => {
       throw new Error(errorMessage);
     }
   };
-  
+
   const clearError = () => {
     setError(null);
   };

@@ -6,8 +6,18 @@ import Sidebar from '@/components/layout/Sidebar';
 import { useUsers } from '@/hooks/useUsers';
 import { UserInvite } from '@/components/users/UserInvite';
 import { RoleAssignment } from '@/components/users/RoleAssignment';
+import { LoadingState } from '@/components/common/LoadingState';
+import { PageWrapper } from '@/components/wrappers/PageWrapper';
 
-export default function UsersPage() {
+export default function UsersPageWrapper() {
+  return (
+    <PageWrapper title="Failed to load users">
+      <UsersPage />
+    </PageWrapper>
+  );
+}
+
+function UsersPage() {
   const { users, loading, error, createUser, updateUser, deleteUser } = useUsers();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -17,11 +27,7 @@ export default function UsersPage() {
         <Sidebar />
         <main className="flex-1 p-8">
           <div className="max-w-7xl mx-auto">
-            <div className="animate-pulse">
-              <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2 mb-8"></div>
-              <div className="h-96 bg-gray-200 rounded"></div>
-            </div>
+            <LoadingState type="users" />
           </div>
         </main>
       </div>
@@ -44,7 +50,7 @@ export default function UsersPage() {
                 <div className="ml-3">
                   <h3 className="text-sm font-medium text-red-800">Error loading users</h3>
                   <div className="mt-2 text-sm text-red-700">
-                    <p>{error.message}</p>
+                    <p>{typeof error === 'string' ? error : (error as Error)?.message || 'An unknown error occurred'}</p>
                   </div>
                 </div>
               </div>
@@ -113,11 +119,10 @@ export default function UsersPage() {
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{user.email}</td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{user.role}</td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
-                              user.status === 'Active' 
-                                ? 'bg-green-100 text-green-800' 
+                            <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${user.status === 'Active'
+                                ? 'bg-green-100 text-green-800'
                                 : 'bg-gray-100 text-gray-800'
-                            }`}>
+                              }`}>
                               {user.status}
                             </span>
                           </td>

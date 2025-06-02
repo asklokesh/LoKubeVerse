@@ -1,14 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-// It's good practice to put type/interface imports separately or clearly
-// If Cluster type is shared, import it from a central types file
-// import type { Cluster } from '@/types/cluster';
 import { MultiClusterView } from '@/components/multicluster/MultiClusterView';
 import { CostDashboard } from '@/components/cost/CostDashboard';
 import { AdvancedMonitoring } from '@/components/monitoring/AdvancedMonitoring';
 import Sidebar from '@/components/layout/Sidebar';
 import { useClusters } from '@/hooks/useClusters';
+import { LoadingState } from '@/components/common/LoadingState';
+import { PageWrapper } from '@/components/wrappers/PageWrapper';
 
 // Define your type/interface, or import it
 interface Cluster {
@@ -20,7 +19,15 @@ interface Cluster {
   // Add other relevant cluster properties if available
 }
 
-export default function ClustersPage() {
+export default function ClusterPageWrapper() {
+  return (
+    <PageWrapper title="Failed to load clusters">
+      <ClustersPage />
+    </PageWrapper>
+  );
+}
+
+function ClustersPage() {
   const {
     clusters,
     loading,
@@ -45,11 +52,7 @@ export default function ClustersPage() {
         <Sidebar />
         <main className="flex-1 p-8">
           <div className="max-w-7xl mx-auto">
-            <div className="animate-pulse">
-              <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2 mb-8"></div>
-              <div className="h-96 bg-gray-200 rounded"></div>
-            </div>
+            <LoadingState type="clusters" />
           </div>
         </main>
       </div>
@@ -181,7 +184,7 @@ export default function ClustersPage() {
 
           {/* These components are kept as is, assuming they are part of the page's functionality */}
           <div className="mt-8"> {/* Added some spacing for the components below the table */}
-             <MultiClusterView />
+            <MultiClusterView />
           </div>
           <div className="mt-8">
             <CostDashboard />
