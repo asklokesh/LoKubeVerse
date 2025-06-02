@@ -2,6 +2,8 @@
 
 // Custom commands for K8s Dashboard testing
 
+export { };
+
 declare global {
     namespace Cypress {
         interface Chainable {
@@ -9,19 +11,19 @@ declare global {
              * Custom command to login with mock authentication
              * @example cy.loginWithMock('admin')
              */
-            loginWithMock(role?: string): Chainable<void>
+            loginWithMock(role?: string): Cypress.Chainable<void>;
 
             /**
              * Custom command to select cluster from dropdown
              * @example cy.selectCluster('cluster-1')
              */
-            selectCluster(clusterId: string): Chainable<void>
+            selectCluster(clusterId: string): Cypress.Chainable<void>;
 
             /**
              * Custom command to wait for dashboard to load
              * @example cy.waitForDashboard()
              */
-            waitForDashboard(): Chainable<void>
+            waitForDashboard(): Cypress.Chainable<void>;
         }
     }
 }
