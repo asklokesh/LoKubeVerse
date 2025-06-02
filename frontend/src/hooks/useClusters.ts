@@ -1,18 +1,23 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useErrorHandler } from './useErrorHandler';
 
-interface Cluster {
+export interface Cluster {
   id: string;
   name: string;
   provider: string;
   region: string;
   status: string;
+  version?: string;
+  nodes?: number;
+  created?: string;
 }
 
 export const useClusters = () => {
   const [clusters, setClusters] = useState<Cluster[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { getErrorMessage } = useErrorHandler();
 
   useEffect(() => {
     const fetchClusters = async () => {
@@ -20,7 +25,8 @@ export const useClusters = () => {
         const response = await axios.get<Cluster[]>('/api/clusters');
         setClusters(response.data);
       } catch (err) {
-        setError('Failed to fetch clusters');
+        console.error('Error fetching clusters:', err);
+        setError(getErrorMessage(err, 'Failed to fetch clusters'));
       } finally {
         setLoading(false);
       }
@@ -35,8 +41,9 @@ export const useClusters = () => {
       setClusters((prev) => [...prev, response.data]);
       return response.data;
     } catch (err) {
-      setError('Failed to create cluster');
-      throw err;
+      const errorMessage = getErrorMessage(err, 'Failed to create cluster');
+      setError(errorMessage);
+      throw new Error(errorMessage);
     }
   };
 
@@ -45,9 +52,14 @@ export const useClusters = () => {
       await axios.delete(`/api/clusters/${id}`);
       setClusters((prev) => prev.filter((cluster) => cluster.id !== id));
     } catch (err) {
-      setError('Failed to delete cluster');
-      throw err;
+      const errorMessage = getErrorMessage(err, 'Failed to delete cluster');
+      setError(errorMessage);
+      throw new Error(errorMessage);
     }
+  };
+  
+  const clearError = () => {
+    setError(null);
   };
 
   return {
@@ -56,5 +68,6 @@ export const useClusters = () => {
     error,
     createCluster,
     deleteCluster,
+    clearError
   };
 }; 

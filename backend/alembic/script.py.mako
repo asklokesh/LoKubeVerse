@@ -1,1 +1,0 @@
-# template for Alembic migration scripts 

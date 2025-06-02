@@ -9,254 +9,237 @@ A unified dashboard for managing Kubernetes clusters across AWS (EKS), Azure (AK
 - ✅ Namespace, Workload, RBAC, Quotas, Network Policies Dashboards
 - ✅ Cost Tracking, Advanced Monitoring, Multi-Cluster Views
 - ✅ Blue/Green, Canary, Rollback Deployment Controls
-- ✅ Comprehensive Test Suite (17 test suites, 32+ tests)
 
-**🚀 Phase 3 COMPLETE**: Testing & Integration
-- ✅ Unit Tests (Frontend & Backend) - All 17 test suites passing
-- ✅ E2E Tests with Cypress - Config fixed for Next.js
-- ✅ Docker Compose with Redis, RabbitMQ, PostgreSQL
-- ✅ Load & Scale Testing Scripts ready
-- ✅ Security Testing & Compliance ready
-- ✅ Application ready for browser testing
+## Architecture Overview
 
-**🚀 READY FOR PRODUCTION**: Full-stack application with enterprise features
+![iOS-inspired K8s Dashboard](./docs/dashboard-preview.png)
 
-## 🎯 Application Status
+### Current Features
 
-✅ **DEPLOYED & RUNNING**: All services up and operational
-- Frontend: http://localhost:3000 (Next.js 14)
-- Backend API: http://localhost:8000 (FastAPI)
-- Database: PostgreSQL 15 ready
-- Cache: Redis 7 connected
-- Message Queue: RabbitMQ 3.12 management
+#### 🔐 Authentication & Authorization
+- **SSO Integration**: Google OAuth2 authentication
+- **Multi-tenancy**: Organization-based tenant isolation
+- **Role-based Access Control**: Admin, Developer, Viewer roles
+- **User Management**: Invite users, assign roles, audit logging
 
-✅ **COMPREHENSIVE TESTING**: All test suites passing
-- 17 frontend test suites with full component coverage
-- Backend smoke tests verified
-- Cypress E2E tests configured
-- Docker Compose orchestration tested
+#### 📊 Dashboard Components
+- **Real-time Monitoring**: Live metrics with iOS-style glassmorphism UI
+- **Multi-cluster Management**: Switch between EKS, AKS, GKE clusters
+- **Resource Management**: Pods, Services, Deployments, ConfigMaps
+- **Network Policies**: Visual policy editor with security recommendations
 
-✅ **PRODUCTION-READY FEATURES**: Enterprise-grade implementation
-- Multi-cloud authentication (AWS, Azure, GCP)
-- Multi-tenant organization support
-- Advanced deployment controls (Blue/Green, Canary)
-- Real-time monitoring and cost tracking
-- Comprehensive security and audit logging
+#### 🚀 Deployment Features
+- **Blue/Green Deployments**: Zero-downtime deployment strategy
+- **Canary Releases**: Gradual rollout with traffic splitting
+- **Rollback Management**: One-click rollback to previous versions
+- **Cost Tracking**: Real-time cost analysis across cloud providers
 
-## Features
+#### 📈 Monitoring & Observability
+- **Prometheus Integration**: Metrics collection and alerting
+- **Custom Dashboards**: Grafana-style monitoring views
+- **Log Aggregation**: Centralized logging with search capabilities
+- **Performance Analytics**: Resource utilization trends
 
-- 🔐 **Multi-Cloud Authentication**
-  - AWS EKS integration with `aws configure`
-  - Azure AKS integration with `az login`
-  - GCP GKE integration with `gcloud auth`
-  - SSO/OIDC/SAML support
-  - Service account and IAM roles
+## Project Structure
 
-- 🎯 **Complete Cluster Management**
-  - Create/delete/scale clusters across clouds
-  - Full namespace and workload management
-  - Resource quotas and limits configuration
-  - RBAC and network policy management
-  - Multi-tenant organization support
+```
+k8s-dash/
+├── docs/                          # Documentation files
+│   ├── README.md                  # Main project documentation
+│   ├── PRD.md                     # Product Requirements Document
+│   ├── COMPLETION_SUMMARY.md      # Development completion status
+│   ├── COMPREHENSIVE_TESTING_REPORT.md
+│   └── TESTING_REPORT.md
+├── scripts/                       # Shell scripts
+│   ├── security-test.sh           # Security testing script
+│   ├── test_api.sh                # API testing script
+│   ├── test_complete_functionality.sh
+│   └── validate.sh                # Validation script
+├── tests/                         # Test files and configurations
+│   ├── load-test.yml              # Load testing configuration
+│   ├── scale-test.yml             # Scale testing configuration
+│   ├── test_output.log            # Test output logs
+│   └── backend.log                # Backend logs
+├── database/                      # Database files and migrations
+│   ├── alembic/                   # Database migration files
+│   ├── alembic.ini                # Alembic configuration
+│   └── k8s_dash.db               # SQLite database
+├── frontend/                      # Next.js frontend application
+│   ├── app/                       # App router pages
+│   ├── components/                # Reusable React components
+│   ├── __tests__/                 # Frontend tests
+│   └── package.json
+├── backend/                       # FastAPI backend application
+│   ├── app/                       # Application code
+│   ├── requirements.txt           # Python dependencies
+│   └── main.py
+├── k8s-ui-zed/                   # UI design mockups
+└── docker-compose.yml            # Docker services configuration
+```
 
-- 📊 **Advanced Monitoring & Observability**
-  - Real-time cluster health monitoring
-  - Pod/node metrics and logs aggregation
-  - Resource utilization dashboards
-  - Cost tracking per cluster/namespace
-  - Alert management with Prometheus integration
+## Technology Stack
 
-- 🚀 **Enterprise Deployment Features**
-  - Helm chart management and deployment
-  - Kubernetes manifest deployment
-  - GitOps workflow (ArgoCD/Flux integration)
-  - Blue/green and canary deployments
-  - Automated rollback capabilities
-  - CI/CD pipeline orchestration
+### Frontend
+- **Next.js 14**: React framework with App Router
+- **TypeScript**: Type-safe development
+- **Tailwind CSS**: Utility-first CSS framework
+- **Lucide Icons**: Modern icon library
+- **Chart.js**: Data visualization
 
-- 👥 **User & Organization Management**
-  - User invitation and role assignment
-  - Tenant switching for multi-tenancy
-  - Comprehensive audit logging
-  - Enterprise SSO configuration
+### Backend
+- **FastAPI**: Modern Python web framework
+- **SQLAlchemy**: SQL toolkit and ORM
+- **Alembic**: Database migration tool
+- **Pydantic**: Data validation using Python type hints
+- **Kubernetes Python Client**: K8s cluster interaction
 
-## Tech Stack
+### Database
+- **SQLite**: Development database
+- **PostgreSQL**: Production database (configurable)
 
-- **Backend**: Python FastAPI with async support
-- **Frontend**: Next.js 14, React 18, TypeScript
-- **Database**: PostgreSQL 15 with Alembic migrations
-- **Cache**: Redis 7 for session management
-- **Message Queue**: RabbitMQ 3.12 for async operations
-- **UI**: Tailwind CSS, Headless UI components
-- **Testing**: Jest, Cypress, Pytest, Locust
-- **DevOps**: Docker Compose, GitHub Actions
+### DevOps
+- **Docker**: Containerization
+- **Docker Compose**: Multi-container orchestration
+- **Kubernetes**: Container orchestration
 
-## Prerequisites
+## Getting Started
 
+### Prerequisites
+- Node.js 18+ and npm
 - Python 3.9+
-- Node.js 18+
-- PostgreSQL 15+
-- Redis 7+
-- RabbitMQ 3.12+
-- Docker & Docker Compose
+- Docker and Docker Compose
+- kubectl configured for your clusters
 
-## 🚀 Quick Start with Docker
+### Installation
 
-**Recommended**: Use Docker Compose for the fastest setup:
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-org/k8s-dash.git
+   cd k8s-dash
+   ```
 
-```bash
-# Clone and start everything
-git clone https://github.com/yourusername/k8s-Dash.git
-cd k8s-Dash
-docker-compose up --build
+2. **Start with Docker Compose**
+   ```bash
+   docker-compose up -d
+   ```
+
+3. **Access the application**
+   - Frontend: http://localhost:3000
+   - Backend API: http://localhost:8000
+   - API Documentation: http://localhost:8000/docs
+
+### Development Setup
+
+1. **Backend Setup**
+   ```bash
+   cd backend
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   pip install -r requirements.txt
+   uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+   ```
+
+2. **Frontend Setup**
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+
+3. **Database Setup**
+   ```bash
+   cd database
+   alembic upgrade head
+   ```
+
+## Configuration
+
+### Environment Variables
+
+Create `.env` files in respective directories:
+
+**Backend (.env)**
+```env
+DATABASE_URL=sqlite:///./database/k8s_dash.db
+SECRET_KEY=your-secret-key-here
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
 ```
 
-Access the application:
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:8000
-- **API Docs**: http://localhost:8000/docs
-- **RabbitMQ Management**: http://localhost:15672 (admin/admin123)
-
-## Manual Development Setup
-
-### Backend Setup
-
-```bash
-# Create and activate virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: .\venv\Scripts\activate
-
-# Install dependencies
-cd backend
-pip install -r requirements.txt
-
-# Set up environment variables
-cp .env.example .env
-# Edit .env with your configuration
-
-# Run database migrations
-alembic upgrade head
-
-# Start the backend server
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+**Frontend (.env.local)**
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-google-client-id
 ```
 
-### Frontend Setup
+### Kubernetes Configuration
 
+Ensure your `~/.kube/config` is properly configured for the clusters you want to manage.
+
+## Testing
+
+### Run Tests
 ```bash
-cd frontend
-npm install
-npm run dev
+# Frontend tests
+cd frontend && npm test
+
+# Backend tests
+cd backend && python -m pytest
+
+# Integration tests
+./scripts/test_complete_functionality.sh
+
+# Load testing
+./scripts/security-test.sh
 ```
 
-### Services Setup
+### Test Coverage
+- Unit tests for all React components
+- API endpoint tests
+- Integration tests for K8s operations
+- Security testing with OWASP ZAP
+- Load testing with custom scripts
 
+## Features in Detail
+
+### Multi-Cloud Support
+- **AWS EKS**: Native integration with AWS services
+- **Azure AKS**: Azure-specific features and monitoring
+- **GCP GKE**: Google Cloud integration and billing
+
+### Security Features
+- **RBAC Integration**: Kubernetes native role-based access
+- **Network Policy Management**: Visual policy editor
+- **Security Scanning**: Container vulnerability scanning
+- **Audit Logging**: Complete audit trail of all actions
+
+### Monitoring & Alerting
+- **Real-time Metrics**: Live cluster and application metrics
+- **Custom Alerts**: Configurable alerting rules
+- **Performance Dashboards**: Resource utilization tracking
+- **Cost Analysis**: Multi-cloud cost breakdown
+
+## Deployment
+
+### Production Deployment
+1. **Configure environment variables for production**
+2. **Set up PostgreSQL database**
+3. **Configure cloud provider credentials**
+4. **Deploy using Docker or Kubernetes**
+
+### Kubernetes Deployment
 ```bash
-# Start PostgreSQL (via Docker)
-docker run --name postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=k8s_dash -p 5432:5432 -d postgres:15
-
-# Start Redis (via Docker)
-docker run --name redis -p 6379:6379 -d redis:7-alpine
-
-# Start RabbitMQ (via Docker)
-docker run --name rabbitmq -p 5672:5672 -p 15672:15672 -e RABBITMQ_DEFAULT_USER=admin -e RABBITMQ_DEFAULT_PASS=admin123 -d rabbitmq:3.12-management
-```
-
-## API Testing
-
-### Authentication
-
-```bash
-# Login
-curl -X POST http://localhost:8000/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email": "admin@example.com", "password": "password123"}'
-
-# Register
-curl -X POST http://localhost:8000/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"email": "user@example.com", "password": "password123", "name": "Test User"}'
-```
-
-### Cluster Management
-
-```bash
-# List clusters
-curl -X GET http://localhost:8000/clusters \
-  -H "Authorization: Bearer YOUR_TOKEN"
-
-# Create cluster
-curl -X POST http://localhost:8000/clusters \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "test-cluster",
-    "provider": "aws",
-    "region": "us-west-2",
-    "version": "1.24"
-  }'
-```
-
-### Deployment Management
-
-```bash
-# List deployments
-curl -X GET http://localhost:8000/deployments \
-  -H "Authorization: Bearer YOUR_TOKEN"
-
-# Create deployment
-curl -X POST http://localhost:8000/deployments \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "test-app",
-    "cluster": "test-cluster",
-    "namespace": "default",
-    "image": "nginx:latest",
-    "replicas": 3
-  }'
-```
-
-## Development
-
-### Backend Development
-
-```bash
-# Run tests
-pytest
-
-# Run linting
-flake8
-black .
-
-# Generate API documentation
-python scripts/generate_docs.py
-```
-
-### Frontend Development
-
-```bash
-# Run tests
-npm test
-
-# Run linting
-npm run lint
-
-# Build for production
-npm run build
-```
-
-## Docker Deployment
-
-```bash
-# Build and run with Docker Compose
-docker-compose up --build
+kubectl apply -f k8s/namespace.yaml
+kubectl apply -f k8s/configmap.yaml
+kubectl apply -f k8s/deployment.yaml
+kubectl apply -f k8s/service.yaml
+kubectl apply -f k8s/ingress.yaml
 ```
 
 ## Contributing
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit your changes (`git commit -m 'Add amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
@@ -267,37 +250,22 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-For support, email support@k8s-dash.com or join our Slack channel.
+For support and questions:
+- 📧 Email: support@k8s-dash.io
+- 📖 Documentation: [docs.k8s-dash.io](https://docs.k8s-dash.io)
+- 🐛 Issues: [GitHub Issues](https://github.com/your-org/k8s-dash/issues)
 
-## Testing Instructions
+## Roadmap
 
-- Start backend: `uvicorn backend.main:app --reload`
-- Start frontend: `cd frontend && npm run dev`
-- Run backend tests: `pytest`
-- Run frontend tests: `cd frontend && npm run test`
-- Run all tests: `pytest && cd frontend && npm run test`
+### Phase 3 (Upcoming)
+- [ ] Multi-region cluster management
+- [ ] Advanced cost optimization recommendations
+- [ ] CI/CD pipeline integration
+- [ ] Custom resource definition (CRD) support
+- [ ] Advanced networking visualizations
 
-## Current Status
-
-- Backend: Basic CRUD operations for users, clusters, and deployments
-- Frontend: Basic UI for users, clusters, and deployments
-- Tests: Basic smoke tests for both backend and frontend
-
-## Known Issues
-
-- SSO login, tenant switcher, and user invite UI not implemented
-- Namespace, workload, RBAC, quotas, network policy, and cost dashboards missing in frontend
-- Advanced monitoring, multi-cluster views, blue/green/canary/rollback deployment controls not present
-- Role assignment and audit log viewer not implemented
-- Some backend endpoints for above features may be missing
-
-## Next Steps
-
-1. Implement SSO login and tenant switcher in Auth UI
-2. Add namespace/workload/RBAC/quotas/network policy/cost management UIs
-3. Build deployment UI for Helm, GitOps, blue/green/canary/rollback
-4. Add user invite, role assignment, and audit log viewer
-5. Implement enterprise features: SSO config, advanced monitoring, multi-cluster views
-6. Connect new UIs to backend endpoints
-7. Write unit/integration tests for new features
-8. Update documentation 
+### Phase 4 (Future)
+- [ ] AI-powered cluster optimization
+- [ ] Predictive scaling recommendations
+- [ ] Advanced security policy templates
+- [ ] Integration with service mesh (Istio/Linkerd)

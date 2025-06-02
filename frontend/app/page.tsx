@@ -1,158 +1,119 @@
-          <div className="flex items-center space-x-1 text-xs font-medium mt-1">            <span>{trend.includes('+') ? '📈' : '📉'}</span>            <span className={trend.includes('+') ? 'text-emerald-600' : 'text-red-600'}>{trend}</span>          </div>        </div>      </div>            {/* Enhanced progress bar with glassmorphism */}      <div className="relative">        <div className="h-3 bg-gray-100/50 backdrop-blur-sm rounded-full overflow-hidden shadow-inner border border-gray-200/30">          <div             className={`h-full bg-gradient-to-r ${gradient} rounded-full shadow-lg transform origin-left transition-all duration-1000 ease-out relative overflow-hidden group-hover:animate-pulse`}            style={{ width: `${value}%` }}          >            {/* Multi-layer glassmorphism effect */}            <div className="absolute inset-0 bg-gradient-to-r from-white/40 via-white/20 to-transparent rounded-full"></div>            <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-white/20 rounded-full"></div>            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/10 to-transparent rounded-full"></div>          </div>        </div>        <p className="text-xs text-gray-500 mt-2 font-medium">{details}</p>      </div>    </div>  </div>);// Real-time Network Activity Componentconst NetworkActivity = () => (  <div className="relative overflow-hidden bg-white/80 backdrop-blur-xl border border-white/20 rounded-3xl shadow-xl p-6">    <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-red-500/10 opacity-50"></div>        <div className="relative">      <h4 className="text-lg font-bold text-gray-900 mb-4 flex items-center space-x-2">        <span>🌐</span><span>Live Network Activity</span>        <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse ml-2"></div>      </h4>            <div className="grid grid-cols-2 gap-6">        <div className="space-y-3">          <div className="flex items-center justify-between">            <span className="text-sm font-medium text-gray-600">Incoming</span>            <span className="text-lg font-black text-orange-600">2.4 Gbps</span>          </div>          <div className="h-2 bg-gray-100 rounded-full overflow-hidden">            <div className="h-full bg-gradient-to-r from-orange-400 to-orange-600 rounded-full animate-pulse" style={{ width: '75%' }}></div>          </div>        </div>                <div className="space-y-3">          <div className="flex items-center justify-between">            <span className="text-sm font-medium text-gray-600">Outgoing</span>            <span className="text-lg font-black text-red-600">1.8 Gbps</span>          </div>          <div className="h-2 bg-gray-100 rounded-full overflow-hidden">            <div className="h-full bg-gradient-to-r from-red-400 to-red-600 rounded-full animate-pulse" style={{ width: '60%' }}></div>          </div>        </div>      </div>            {/* Live data streams visualization */}      <div className="mt-6 grid grid-cols-4 gap-2">        {Array.from({ length: 16 }).map((_, i) => (          <div             key={i}            className="h-8 bg-gradient-to-t from-gray-200 to-gray-300 rounded-lg relative overflow-hidden"            style={{               animationDelay: `${i * 100}ms`,              animation: 'pulse 2s infinite'            }}          >            <div               className="absolute bottom-0 w-full bg-gradient-to-t from-orange-400 to-orange-600 rounded-lg transition-all duration-1000"              style={{                 height: `${Math.random() * 80 + 20}%`,                animationDelay: `${i * 150}ms`              }}            ></div>          </div>        ))}      </div>    </div>  </div>);// Enhanced Resource Health Monitorconst ResourceHealthMonitor = () => (  <div className="relative overflow-hidden bg-white/80 backdrop-blur-xl border border-white/20 rounded-3xl shadow-xl p-6">    <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-green-500/10 opacity-50"></div>        <div className="relative">      <h4 className="text-lg font-bold text-gray-900 mb-6 flex items-center space-x-2">        <span>🏥</span><span>System Health</span>        <div className="ml-auto px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">          All Systems Operational        </div>      </h4>            <div className="space-y-4">        {[          { name: 'API Server', status: 99.9, latency: '12ms', color: 'emerald' },          { name: 'Scheduler', status: 100, latency: '8ms', color: 'emerald' },          { name: 'Controller Manager', status: 98.7, latency: '15ms', color: 'emerald' },          { name: 'etcd Cluster', status: 99.5, latency: '6ms', color: 'emerald' },          { name: 'Kubelet', status: 97.8, latency: '22ms', color: 'orange' }        ].map((component, index) => (          <div key={index} className="flex items-center space-x-4 p-3 rounded-2xl bg-white/40 backdrop-blur-sm border border-white/30">            <div className={`w-3 h-3 bg-${component.color}-500 rounded-full shadow-lg`}>              <div className={`w-3 h-3 bg-${component.color}-400 rounded-full animate-ping`}></div>            </div>            <div className="flex-1">              <div className="flex items-center justify-between">                <span className="font-medium text-gray-900">{component.name}</span>                <div className="flex items-center space-x-2">                  <span className="text-sm font-bold text-gray-600">{component.latency}</span>                  <span className={`text-sm font-bold text-${component.color}-600`}>{component.status}%</span>                </div>              </div>              <div className="mt-2 h-1.5 bg-gray-200 rounded-full overflow-hidden">                <div                   className={`h-full bg-gradient-to-r from-${component.color}-400 to-${component.color}-600 rounded-full transition-all duration-1000`}                  style={{ width: `${component.status}%` }}                ></div>              </div>            </div>          </div>        ))}      </div>    </div>  </div>);const MonitoringDashboard = ({ clusterId }: { clusterId: string }) => (  <div className="space-y-8">    {/* Header with live status */}    <div className="relative overflow-hidden bg-white/80 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl">      <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-blue-500/5 to-purple-500/10 opacity-50"></div>            <div className="relative p-8">        <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-4 sm:space-y-0">          <div className="flex items-center space-x-4">            <div className="relative">              <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 via-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl hover:scale-105 transition-transform duration-300">                <span className="text-3xl filter drop-shadow-lg">📊</span>              </div>              <div className="absolute -top-1 -right-1 w-6 h-6 bg-emerald-400 rounded-full border-2 border-white shadow-lg animate-pulse"></div>            </div>            <div>              <h3 className="text-3xl font-bold text-gray-900 tracking-tight">Live Monitoring</h3>              <p className="text-sm text-gray-500 font-medium mt-1">                Cluster: <span className="text-blue-600 font-bold">{clusterId}</span> •                 <span className="text-emerald-600 font-bold ml-1">Real-time Data</span>              </p>            </div>          </div>                    <div className="flex items-center space-x-4">            <div className="flex items-center space-x-3 px-4 py-2 bg-emerald-50/80 backdrop-blur-sm rounded-2xl border border-emerald-200/50">              <div className="w-3 h-3 bg-emerald-500 rounded-full shadow-lg">                <div className="w-3 h-3 bg-emerald-400 rounded-full animate-ping"></div>              </div>              <span className="text-sm font-semibold text-emerald-700">Real-time</span>            </div>            <button className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-2xl hover:scale-105 transition-all duration-300 shadow-xl font-bold">              Export Data            </button>          </div>        </div>      </div>    </div>    {/* Enhanced Metric Cards Grid */}    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">      <MetricCard        title="CPU Usage"        value={72}        unit="%"        icon="🧠"        gradient="from-emerald-400 to-emerald-600"        status="excellent"        trend="+2.1%"        details="2.88 / 4.0 cores • 4 nodes active"      />      <MetricCard        title="Memory Usage"        value={68}        unit="%"        icon="💾"        gradient="from-blue-400 to-blue-600"        status="good"        trend="+5.3%"        details="27.2 / 40 GB • 16 pods running"      />      <MetricCard        title="Storage Usage"        value={45}        unit="%"        icon="💿"        gradient="from-purple-400 to-pink-600"        status="excellent"        trend="-1.2%"        details="450 / 1000 GB • 12 volumes"      />      <MetricCard        title="Network Load"        value={82}        unit="%"        icon="🌐"        gradient="from-orange-400 to-red-500"        status="warning"        trend="+12.8%"        details="4.2 Gbps peak • 8 services"      />    </div>    {/* Advanced Monitoring Components */}    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">      <NetworkActivity />      <ResourceHealthMonitor />    </div>    {/* Enhanced Pod Status Grid */}    <div className="relative overflow-hidden bg-white/80 backdrop-blur-xl border border-white/20 rounded-3xl shadow-xl">      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 opacity-50"></div>            <div className="relative p-8">        <h4 className="text-2xl font-bold text-gray-900 mb-6 flex items-center space-x-3">          <span>⚙️</span><span>Pod Status Overview</span>          <div className="ml-auto text-sm font-medium text-gray-500">            Last updated: <span className="text-blue-600 font-bold">2 seconds ago</span>          </div>        </h4>                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">          {[            { status: 'Running', count: 1247, color: 'emerald', icon: '🟢' },            { status: 'Pending', count: 12, color: 'orange', icon: '🟡' },            { status: 'Failed', count: 3, color: 'red', icon: '🔴' },            { status: 'Succeeded', count: 892, color: 'blue', icon: '🔵' }          ].map((item, index) => (            <div key={index} className="group relative overflow-hidden bg-white/60 backdrop-blur-sm border border-white/30 rounded-2xl p-6 hover:scale-105 transition-all duration-300 cursor-pointer">              <div className={`absolute inset-0 bg-gradient-to-br from-${item.color}-500/10 to-${item.color}-600/10 opacity-50 group-hover:opacity-70 transition-opacity duration-300`}></div>                            <div className="relative">                <div className="flex items-center justify-between mb-4">                  <span className="text-2xl">{item.icon}</span>                  <div className={`px-3 py-1 bg-${item.color}-100 text-${item.color}-700 text-xs font-bold rounded-full`}>                    {item.status}                  </div>                </div>                <div className={`text-3xl font-black bg-gradient-to-r from-${item.color}-600 to-${item.color}-800 bg-clip-text text-transparent mb-2`}>                  {item.count.toLocaleString()}                </div>                <div className="text-sm text-gray-500 font-medium">                  {item.status} Pods                </div>              </div>            </div>          ))}        </div>      </div>    </div>  </div>);// Premium Cost Dashboardconst CostDashboard = ({ clusterId }: { clusterId: string }) => (  <div className="relative overflow-hidden bg-white/80 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 ease-out group">    <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-blue-500/5 to-purple-500/10 opacity-50 group-hover:opacity-70 transition-opacity duration-500"></div>        <div className="relative p-8 sm:p-10">      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 space-y-4 sm:space-y-0">        <div className="flex items-center space-x-4">          <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 via-green-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-xl">            <span className="text-3xl filter drop-shadow-lg">💰</span>          </div>          <div>            <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">Cost Analysis</h3>            <p className="text-sm text-gray-500 font-medium mt-1">Cluster: <span className="text-blue-600">{clusterId}</span></p>          </div>        </div>        <div className="text-right">          <div className="text-4xl font-black bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">$4,646</div>          <div className="text-sm text-gray-500 font-medium">This month</div>        </div>      </div>      <div className="space-y-8">        {/* Cost Breakdown Cards */}        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">          <div className="bg-gradient-to-br from-blue-50/80 to-blue-100/80 backdrop-blur-sm p-6 rounded-2xl border border-blue-200/50 shadow-lg">            <div className="flex items-center justify-between mb-4">              <div>                <p className="text-sm text-blue-600 font-bold">Compute</p>                <p className="text-2xl font-black text-blue-700">$2,845</p>              </div>              <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center shadow-lg">                <span className="text-white text-lg font-bold">🖥️</span>              </div>            </div>            <div className="flex items-center text-xs text-blue-600 font-medium">              <span className="mr-1">↗️</span><span>+12% from last month</span>            </div>          </div>          <div className="bg-gradient-to-br from-purple-50/80 to-purple-100/80 backdrop-blur-sm p-6 rounded-2xl border border-purple-200/50 shadow-lg">            <div className="flex items-center justify-between mb-4">              <div>                <p className="text-sm text-purple-600 font-bold">Storage</p>                <p className="text-2xl font-black text-purple-700">$1,234</p>              </div>              <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center shadow-lg">                <span className="text-white text-lg font-bold">💾</span>              </div>            </div>            <div className="flex items-center text-xs text-purple-600 font-medium">              <span className="mr-1">↘️</span><span>-5% from last month</span>            </div>          </div>          <div className="bg-gradient-to-br from-orange-50/80 to-orange-100/80 backdrop-blur-sm p-6 rounded-2xl border border-orange-200/50 shadow-lg">            <div className="flex items-center justify-between mb-4">              <div>                <p className="text-sm text-orange-600 font-bold">Network</p>                <p className="text-2xl font-black text-orange-700">$567</p>              </div>              <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center shadow-lg">                <span className="text-white text-lg font-bold">🌐</span>              </div>            </div>            <div className="flex items-center text-xs text-orange-600 font-medium">              <span className="mr-1">↗️</span><span>+8% from last month</span>            </div>          </div>        </div>        {/* Cost Optimization Tips */}        <div className="bg-gradient-to-r from-yellow-50/80 to-orange-50/80 backdrop-blur-sm p-6 rounded-2xl border border-yellow-200/50 shadow-lg">          <h4 className="text-lg font-bold text-gray-800 mb-4 flex items-center space-x-2">            <span>💡</span><span>Cost Optimization Tips</span>          </h4>          <ul className="space-y-2 text-sm text-gray-700">            <li className="flex items-center space-x-2">              <span className="w-2 h-2 bg-yellow-500 rounded-full"></span>              <span>Right-size 3 over-provisioned nodes (potential saving: <span className="font-bold text-green-600">$245/month</span>)</span>            </li>            <li className="flex items-center space-x-2">              <span className="w-2 h-2 bg-orange-500 rounded-full"></span>              <span>Use spot instances for development workloads (potential saving: <span className="font-bold text-green-600">$180/month</span>)</span>            </li>            <li className="flex items-center space-x-2">              <span className="w-2 h-2 bg-red-500 rounded-full"></span>              <span>Archive unused persistent volumes (potential saving: <span className="font-bold text-green-600">$89/month</span>)</span>            </li>          </ul>        </div>      </div>    </div>  </div>);// Premium Overview Dashboardconst OverviewDashboard = () => (  <div className="space-y-8">    {/* Premium Metric Cards */}    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">      {/* Active Clusters Card */}      <div className="relative overflow-hidden bg-white/80 backdrop-blur-xl border border-white/20 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 group hover:scale-105">        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-blue-600/10 opacity-50 group-hover:opacity-70 transition-opacity duration-500"></div>        <div className="relative p-8">          <div className="flex items-center justify-between mb-6">            <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center shadow-xl group-hover:shadow-2xl transition-all duration-300">              <span className="text-3xl filter drop-shadow-lg">🔗</span>            </div>            <div className="text-right">              <div className="flex items-center space-x-1 text-green-600 text-sm font-bold">                <span>↗️</span><span>+2 this week</span>              </div>            </div>          </div>          <h3 className="text-lg font-bold text-gray-900 mb-2">Active Clusters</h3>          <p className="text-4xl font-black bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent mb-2">12</p>          <p className="text-sm text-gray-500 font-medium">Across AWS, Azure, GCP</p>          <div className="mt-6 flex items-center space-x-2">            <div className="flex space-x-1">              <div className="w-3 h-3 bg-orange-400 rounded-full shadow-lg"></div>              <div className="w-3 h-3 bg-blue-400 rounded-full shadow-lg"></div>              <div className="w-3 h-3 bg-red-400 rounded-full shadow-lg"></div>            </div>            <span className="text-xs text-gray-500 font-medium">Multi-cloud</span>          </div>        </div>      </div>      {/* Total Pods Card */}      <div className="relative overflow-hidden bg-white/80 backdrop-blur-xl border border-white/20 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 group hover:scale-105">        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-emerald-600/10 opacity-50 group-hover:opacity-70 transition-opacity duration-500"></div>        <div className="relative p-8">          <div className="flex items-center justify-between mb-6">            <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center shadow-xl group-hover:shadow-2xl transition-all duration-300">              <span className="text-3xl filter drop-shadow-lg">⚙️</span>            </div>            <div className="text-right">              <div className="flex items-center space-x-1 text-emerald-600 text-sm font-bold">                <span>🟢</span><span>98.7% uptime</span>              </div>            </div>          </div>          <h3 className="text-lg font-bold text-gray-900 mb-2">Total Pods</h3>          <p className="text-4xl font-black bg-gradient-to-r from-emerald-600 to-emerald-800 bg-clip-text text-transparent mb-2">1,247</p>          <p className="text-sm text-gray-500 font-medium">Running workloads</p>          <div className="mt-6">            <div className="flex justify-between text-xs text-gray-500 mb-2 font-medium">              <span>CPU Utilization</span>              <span className="font-bold">72%</span>            </div>            <div className="w-full bg-gray-200 rounded-full h-2 shadow-inner">              <div className="bg-gradient-to-r from-emerald-400 to-emerald-600 h-2 rounded-full shadow-lg" style={{ width: '72%' }}></div>            </div>          </div>        </div>      </div>      {/* Monthly Cost Card */}      <div className="relative overflow-hidden bg-white/80 backdrop-blur-xl border border-white/20 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 group hover:scale-105">        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-purple-600/10 opacity-50 group-hover:opacity-70 transition-opacity duration-500"></div>        <div className="relative p-8">          <div className="flex items-center justify-between mb-6">            <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl group-hover:shadow-2xl transition-all duration-300">              <span className="text-3xl filter drop-shadow-lg">💰</span>            </div>            <div className="text-right">              <div className="flex items-center space-x-1 text-orange-600 text-sm font-bold">                <span>📈</span><span>+8% vs last month</span>              </div>            </div>          </div>          <h3 className="text-lg font-bold text-gray-900 mb-2">Monthly Cost</h3>          <p className="text-4xl font-black bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent mb-2">$8,432</p>          <p className="text-sm text-gray-500 font-medium">Cross-cloud total</p>          <div className="mt-6 grid grid-cols-3 gap-3 text-xs">            <div className="text-center">              <div className="font-black text-orange-600">$2,845</div>              <div className="text-gray-500 font-medium">AWS</div>            </div>            <div className="text-center">              <div className="font-black text-blue-600">$3,234</div>              <div className="text-gray-500 font-medium">Azure</div>            </div>            <div className="text-center">              <div className="font-black text-red-600">$2,353</div>              <div className="text-gray-500 font-medium">GCP</div>            </div>          </div>        </div>      </div>      {/* Health Score Card */}      <div className="relative overflow-hidden bg-white/80 backdrop-blur-xl border border-white/20 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 group hover:scale-105">        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-green-600/10 opacity-50 group-hover:opacity-70 transition-opacity duration-500"></div>        <div className="relative p-8">          <div className="flex items-center justify-between mb-6">            <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-green-600 rounded-2xl flex items-center justify-center shadow-xl group-hover:shadow-2xl transition-all duration-300">              <span className="text-3xl filter drop-shadow-lg">🎯</span>            </div>            <div className="text-right">              <div className="flex items-center space-x-1 text-emerald-600 text-sm font-bold">                <span>✅</span><span>Excellent</span>              </div>            </div>          </div>          <h3 className="text-lg font-bold text-gray-900 mb-2">Health Score</h3>          <p className="text-4xl font-black bg-gradient-to-r from-emerald-600 to-green-800 bg-clip-text text-transparent mb-2">98%</p>          <p className="text-sm text-gray-500 font-medium">System reliability</p>          <div className="mt-6">            <div className="flex justify-between text-xs text-gray-500 mb-2 font-medium">              <span>Performance</span>              <span className="font-bold text-emerald-600">Optimal</span>            </div>            <div className="w-full bg-gray-200 rounded-full h-2 shadow-inner">              <div className="bg-gradient-to-r from-emerald-400 to-green-600 h-2 rounded-full shadow-lg" style={{ width: '98%' }}></div>            </div>          </div>        </div>      </div>    </div>    {/* Activity Feed & Quick Actions */}    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">      {/* Activity Feed */}      <div className="lg:col-span-2">        <div className="relative overflow-hidden bg-white/80 backdrop-blur-xl border border-white/20 rounded-3xl shadow-xl">          <div className="absolute inset-0 bg-gradient-to-br from-gray-500/5 to-blue-500/5"></div>          <div className="relative p-8">            <div className="flex items-center justify-between mb-8">              <h3 className="text-2xl font-bold text-gray-900 flex items-center space-x-3">                <span>🔄</span><span>Recent Activity</span>              </h3>              <button className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-2xl hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-lg font-bold">                View All              </button>            </div>            <div className="space-y-4">              {[                { icon: '🚀', title: 'Deployment completed', subtitle: 'web-app-v2.3.1', time: '2 min ago', status: 'success', color: 'emerald' },                { icon: '📈', title: 'Auto-scaled up', subtitle: 'api-server (3→5 replicas)', time: '5 min ago', status: 'info', color: 'blue' },                { icon: '🔄', title: 'Rolling update', subtitle: 'database-cluster', time: '12 min ago', status: 'progress', color: 'purple' },                { icon: '⚠️', title: 'High memory usage detected', subtitle: 'worker-node-3', time: '15 min ago', status: 'warning', color: 'orange' },                { icon: '✅', title: 'Health check passed', subtitle: 'load-balancer', time: '18 min ago', status: 'success', color: 'emerald' }              ].map((activity, index) => (                <div key={index} className="flex items-center space-x-4 p-4 rounded-2xl border border-gray-200/50 hover:border-gray-300/50 hover:bg-white/50 transition-all duration-200 backdrop-blur-sm">                  <div className="w-12 h-12 bg-gray-100/80 backdrop-blur-sm rounded-xl flex items-center justify-center">                    <span className="text-lg">{activity.icon}</span>                  </div>                  <div className="flex-1">                    <div className="font-bold text-gray-900">{activity.title}</div>                    <div className="text-sm text-gray-600">{activity.subtitle}</div>                  </div>                  <div className="text-right">                    <div className="text-sm text-gray-500 font-medium">{activity.time}</div>                    <div className={`text-xs px-3 py-1 rounded-full font-bold mt-1 bg-${activity.color}-100 text-${activity.color}-700`}>                      {activity.status}                    </div>                  </div>                </div>              ))}            </div>          </div>        </div>      </div>      {/* Quick Actions & Resource Health */}      <div className="space-y-6">        {/* Quick Actions */}        <div className="relative overflow-hidden bg-white/80 backdrop-blur-xl border border-white/20 rounded-3xl shadow-xl">          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5"></div>          <div className="relative p-6">            <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center space-x-2">              <span>⚡</span><span>Quick Actions</span>            </h3>            <div className="space-y-3">              {[                { icon: '🚀', label: 'Deploy Application', gradient: 'from-blue-500 to-blue-600' },                { icon: '📊', label: 'View Metrics', gradient: 'from-emerald-500 to-emerald-600' },                { icon: '🔧', label: 'Configure Cluster', gradient: 'from-purple-500 to-purple-600' }              ].map((action, index) => (                <button key={index} className={`w-full bg-gradient-to-r ${action.gradient} text-white p-4 rounded-2xl hover:scale-105 transition-all duration-300 shadow-lg flex items-center space-x-3 font-bold`}>                  <span className="text-lg">{action.icon}</span>                  <span>{action.label}</span>                </button>              ))}            </div>          </div>        </div>        {/* Resource Health */}        <div className="relative overflow-hidden bg-white/80 backdrop-blur-xl border border-white/20 rounded-3xl shadow-xl">          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-green-500/5"></div>          <div className="relative p-6">            <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center space-x-2">              <span>🏥</span><span>Resource Health</span>            </h3>            <div className="space-y-4">              {[                { label: 'CPU Usage', status: 'Normal', color: 'emerald' },                { label: 'Memory Usage', status: 'Normal', color: 'emerald' },                { label: 'Network I/O', status: 'Healthy', color: 'emerald' },                { label: 'Storage', status: 'Optimal', color: 'emerald' }              ].map((item, index) => (                <div key={index} className="flex items-center justify-between">                  <span className="text-gray-700 font-medium">{item.label}</span>                  <span className={`text-${item.color}-600 font-bold px-3 py-1 bg-${item.color}-100 rounded-full text-sm`}>                    {item.status}                  </span>                </div>              ))}            </div>          </div>        </div>      </div>    </div>  </div>);// Main Dashboard Componentexport default function K8sDashboard() {  const [isAuthenticated, setIsAuthenticated] = useState(true);  const [currentTenant, setCurrentTenant] = useState('production');  const [activeTab, setActiveTab] = useState('overview');  const [isLoading, setIsLoading] = useState(false);  useEffect(() => {    const interval = setInterval(() => {      // Real-time updates simulation    }, 5000);    return () => clearInterval(interval);  }, []);  const mockTenants = [    { id: 'production', name: '🏭 Production' },    { id: 'staging', name: '🧪 Staging' },    { id: 'development', name: '💻 Development' },    { id: 'qa', name: '🔍 QA Testing' }  ];  const tabs = [    { id: 'overview', label: 'Overview', icon: '📊' },    { id: 'clusters', label: 'Clusters', icon: '🔗' },    { id: 'namespaces', label: 'Namespaces', icon: '📁' },    { id: 'workloads', label: 'Workloads', icon: '⚙️' },    { id: 'deployments', label: 'Deployments', icon: '🚀' },    { id: 'monitoring', label: 'Monitoring', icon: '📈' },    { id: 'costs', label: 'Costs', icon: '💰' },    { id: 'rbac', label: 'RBAC', icon: '🔐' },    { id: 'network', label: 'Network', icon: '🌐' },    { id: 'quotas', label: 'Quotas', icon: '📏' },    { id: 'users', label: 'Users', icon: '👥' },    { id: 'audit', label: 'Audit', icon: '📋' }  ];  const renderContent = () => {    const mockClusterId = 'cluster-1';        switch (activeTab) {      case 'overview': return <OverviewDashboard />;      case 'monitoring': return <MonitoringDashboard clusterId={mockClusterId} />;      case 'costs': return <CostDashboard clusterId={mockClusterId} />;      default: return <OverviewDashboard />;    }  };  if (!isAuthenticated) {    return (      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 flex items-center justify-center p-4">        <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">          {/* Left side - Hero content */}          <div className="text-left space-y-8">            <div className="space-y-6">              <div className="flex items-center space-x-4">                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 via-purple-500 to-emerald-500 rounded-2xl flex items-center justify-center shadow-xl">                  <span className="text-3xl filter drop-shadow-lg">☸️</span>                </div>                <h1 className="text-6xl font-black bg-gradient-to-r from-gray-800 via-blue-600 to-purple-600 bg-clip-text text-transparent tracking-tight">                  K8s-Dash                </h1>              </div>              <h2 className="text-3xl font-bold text-gray-800 leading-tight">                Next-Generation Kubernetes Management Platform              </h2>              <p className="text-xl text-gray-600 leading-relaxed">                Manage your Kubernetes clusters across AWS, Azure, and Google Cloud from a single, powerful dashboard.                Monitor resources, deploy applications, and optimize costs with enterprise-grade features.              </p>            </div>            {/* Feature highlights */}            <div className="grid grid-cols-2 gap-6">              {[                { icon: '🚀', label: 'Multi-cloud Support', color: 'emerald' },                { icon: '📊', label: 'Real-time Monitoring', color: 'blue' },                { icon: '🔐', label: 'Enterprise Security', color: 'purple' },                { icon: '💰', label: 'Cost Optimization', color: 'orange' }              ].map((feature, index) => (                <div key={index} className="flex items-center space-x-4">                  <div className={`w-12 h-12 bg-${feature.color}-100 rounded-xl flex items-center justify-center shadow-lg`}>                    <span className={`text-${feature.color}-600 text-xl`}>{feature.icon}</span>                  </div>                  <span className="text-gray-700 font-bold text-lg">{feature.label}</span>                </div>              ))}            </div>          </div>          {/* Right side - Login form */}          <div className="relative overflow-hidden bg-white/70 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/30">            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5"></div>            <div className="relative p-10">              <div className="text-center mb-10">                <h3 className="text-3xl font-bold text-gray-900 mb-3">Welcome Back</h3>                <p className="text-gray-600 text-lg">Sign in to access your Kubernetes dashboard</p>              </div>              <div className="space-y-6">                <button                   onClick={() => setIsAuthenticated(true)}                  className="w-full bg-gradient-to-r from-blue-500 via-purple-500 to-emerald-500 text-white p-4 rounded-2xl hover:scale-105 transition-all duration-300 shadow-xl font-bold text-lg"                >                  🚀 Enter Dashboard                </button>                                <div className="grid grid-cols-2 gap-4">                  <button className="flex items-center justify-center space-x-2 p-3 bg-white/60 backdrop-blur-sm border border-white/30 rounded-xl hover:bg-white/80 transition-all duration-200 font-medium">                    <span>🔐</span><span>SSO Login</span>                  </button>                  <button className="flex items-center justify-center space-x-2 p-3 bg-white/60 backdrop-blur-sm border border-white/30 rounded-xl hover:bg-white/80 transition-all duration-200 font-medium">                    <span>🌐</span><span>OIDC</span>                  </button>                </div>              </div>            </div>          </div>        </div>      </div>    );  }  return (    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 relative overflow-hidden">      {/* Ambient Background Elements */}      <div className="absolute inset-0 overflow-hidden pointer-events-none">        <div className="absolute top-0 -left-4 w-72 h-72 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl"></div>        <div className="absolute bottom-0 -right-4 w-72 h-72 bg-gradient-to-tl from-emerald-400/20 to-blue-400/20 rounded-full blur-3xl"></div>      </div>      {/* Premium iOS-style Header */}      <header className="relative bg-white/70 backdrop-blur-2xl border-b border-white/20 shadow-lg shadow-black/5 sticky top-0 z-50">        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-emerald-500/5"></div>        <div className="relative px-4 sm:px-6 lg:px-8">          <div className="flex items-center justify-between py-3 sm:py-4">            {/* Logo & Branding */}            <div className="flex items-center space-x-4">              <div className="relative group">                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 via-purple-500 to-emerald-500 rounded-2xl flex items-center justify-center shadow-xl transform group-hover:scale-105 transition-all duration-300">                  <span className="text-2xl filter drop-shadow-lg">☸️</span>                </div>                <div className="absolute -inset-1 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>              </div>              <div className="hidden sm:block">                <h1 className="text-2xl sm:text-3xl font-black bg-gradient-to-r from-gray-800 via-blue-600 to-purple-600 bg-clip-text text-transparent tracking-tight">                  K8s-Dash                </h1>                <p className="text-xs text-gray-500 font-medium mt-0.5">Multi-cloud Kubernetes Platform</p>              </div>            </div>            {/* Center Search & Controls */}            <div className="flex-1 flex justify-center px-4">              <div className="hidden md:flex items-center bg-white/60 backdrop-blur-xl border border-white/30 rounded-2xl px-4 py-2 shadow-lg max-w-md w-full">                <span className="text-gray-400 mr-3">🔍</span>                <input                  type="text"                  placeholder="Search clusters, pods, services..."                  className="bg-transparent border-none outline-none text-sm flex-1 placeholder-gray-400"                />                <div className="ml-3 px-2 py-1 bg-gray-100 rounded-lg text-xs font-medium text-gray-500">⌘K</div>              </div>            </div>            {/* Right Actions */}            <div className="flex items-center space-x-3 sm:space-x-4">              {/* Tenant Switcher */}              <div className="hidden sm:block">                <select                  value={currentTenant}                  onChange={(e) => setCurrentTenant(e.target.value)}                  className="bg-white/60 backdrop-blur-xl border border-white/30 rounded-xl px-3 py-2 text-sm font-medium text-gray-700 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-200"                >                  {mockTenants.map(tenant => (                    <option key={tenant.id} value={tenant.id}>{tenant.name}</option>                  ))}                </select>              </div>
-              {/* Status Badge */}
-              <div className="hidden lg:flex items-center space-x-2 px-3 py-2 bg-emerald-50/80 backdrop-blur-sm border border-emerald-200/50 rounded-xl">
-                <div className="w-2 h-2 bg-emerald-500 rounded-full">
-                  <div className="w-2 h-2 bg-emerald-400 rounded-full animate-ping"></div>
-                </div>
-                <span className="text-xs font-semibold text-emerald-700">All Systems OK</span>
+'use client';
+
+import { useEffect, useState } from 'react';
+import Sidebar from '@/components/layout/Sidebar'
+import { useClusters } from '@/hooks/useClusters';
+import { useDeployments } from '@/hooks/useDeployments';
+import { MockDataProvider } from '@/providers/MockDataProvider';
+import { ErrorBoundary } from '@/components/common/ErrorBoundary';
+import { ErrorFallback } from '@/components/common/ErrorFallback';
+import { LoadingState } from '@/components/common/LoadingState';
+
+export default function Home() {
+  const { clusters, loading: clustersLoading } = useClusters();
+  const { deployments, loading: deploymentsLoading } = useDeployments();
+  const [resourceUsage, setResourceUsage] = useState(0);
+
+  useEffect(() => {
+    // Simulate resource usage calculation
+    const calculateResourceUsage = () => {
+      const totalNodes = clusters.reduce((sum, cluster: any) => sum + cluster.nodes, 0);
+      const totalDeployments = deployments.length;
+      const usage = Math.min(100, Math.round((totalDeployments / (totalNodes * 5)) * 100));
+      setResourceUsage(usage);
+    };
+
+    if (!clustersLoading && !deploymentsLoading) {
+      calculateResourceUsage();
+    }
+  }, [clusters, deployments, clustersLoading, deploymentsLoading]);
+
+  if (clustersLoading || deploymentsLoading) {
+    return (
+      <div className="flex h-screen">
+        <Sidebar />
+        <main className="flex-1 p-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="animate-pulse">
+              <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="h-32 bg-gray-200 rounded"></div>
+                ))}
               </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
-              {/* Notifications */}
-              <button className="relative p-3 bg-white/60 backdrop-blur-xl border border-white/30 rounded-xl shadow-lg hover:bg-white/80 transition-all duration-200 group">
-                <span className="text-lg group-hover:scale-110 transition-transform duration-200">🔔</span>
-                <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">3</div>
-              </button>
-
-              {/* User Menu */}
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                  <span className="text-white font-bold">👤</span>
+  return (
+    <div className="flex h-screen">
+      <Sidebar />
+      <main className="flex-1 p-8">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+          <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {/* Cluster Stats */}
+            <div className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-500 truncate">Total Clusters</dt>
+                      <dd className="text-lg font-medium text-gray-900">{clusters.length}</dd>
+                    </dl>
+                  </div>
                 </div>
-                <button
-                  onClick={() => setIsAuthenticated(false)}
-                  className="hidden sm:block px-4 py-2 bg-red-500/90 backdrop-blur-sm text-white rounded-xl font-medium shadow-lg hover:bg-red-600 transition-all duration-200"
-                >
-                  Logout
-                </button>
+              </div>
+            </div>
+
+            {/* Active Deployments */}
+            <div className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-500 truncate">Active Deployments</dt>
+                      <dd className="text-lg font-medium text-gray-900">{deployments.length}</dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Resource Usage */}
+            <div className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-500 truncate">Resource Usage</dt>
+                      <dd className="text-lg font-medium text-gray-900">{resourceUsage}%</dd>
+                    </dl>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </header>
-
-      <div className="flex min-h-screen">
-        {/* Premium iOS-style Sidebar */}
-        <nav className="w-20 lg:w-80 bg-white/40 backdrop-blur-2xl border-r border-white/20 relative overflow-hidden">
-          {/* Sidebar Background Gradient */}
-          <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 via-purple-500/5 to-emerald-500/5"></div>
-          
-          <div className="relative p-4 lg:p-6">
-            {/* Current Environment Card */}
-            <div className="hidden lg:block mb-8">
-              <div className="bg-white/60 backdrop-blur-xl border border-white/30 rounded-3xl p-5 shadow-xl">
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 via-purple-500 to-emerald-500 rounded-2xl flex items-center justify-center shadow-lg">
-                    <span className="text-white font-bold text-lg">
-                      {mockTenants.find(t => t.id === currentTenant)?.name.charAt(0) || 'P'}
-                    </span>
-                  </div>
-                  <div>
-                    <div className="font-bold text-gray-900 text-lg">
-                      {mockTenants.find(t => t.id === currentTenant)?.name.replace(/[^\w\s]/gi, '') || 'Production'}
-                    </div>
-                    <div className="text-sm text-gray-500 font-medium">Active Environment</div>
-                  </div>
-                </div>
-                
-                {/* Quick Stats */}
-                <div className="mt-4 grid grid-cols-3 gap-3">
-                  <div className="text-center">
-                    <div className="text-xl font-black text-blue-600">12</div>
-                    <div className="text-xs text-gray-500 font-medium">Clusters</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-xl font-black text-emerald-600">1.2K</div>
-                    <div className="text-xs text-gray-500 font-medium">Pods</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-xl font-black text-purple-600">98%</div>
-                    <div className="text-xs text-gray-500 font-medium">Health</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Navigation Items */}
-            <div className="space-y-2">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`group w-full flex items-center justify-center lg:justify-start space-x-4 px-3 lg:px-4 py-4 rounded-2xl transition-all duration-300 ${
-                    activeTab === tab.id
-                      ? 'bg-white/80 backdrop-blur-xl border border-white/40 shadow-xl text-gray-900 scale-105'
-                      : 'text-gray-600 hover:bg-white/30 hover:backdrop-blur-sm hover:text-gray-900 hover:scale-102'
-                  }`}
-                >
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 ${
-                    activeTab === tab.id
-                      ? 'bg-gradient-to-br from-blue-500 to-purple-600 text-white shadow-lg'
-                      : 'bg-gray-100/50 group-hover:bg-white/60 text-gray-600 group-hover:text-gray-800'
-                  }`}>
-                    <span className="text-lg font-bold">{tab.icon}</span>
-                  </div>
-                  <div className="hidden lg:block flex-1 text-left">
-                    <div className="font-bold text-base">{tab.label}</div>
-                    {activeTab === tab.id && (
-                      <div className="text-xs text-gray-500 font-medium mt-1">Active</div>
-                    )}
-                  </div>
-                  {activeTab === tab.id && (
-                    <div className="hidden lg:block w-3 h-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full shadow-lg"></div>
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-        </nav>
-
-        {/* Premium Main Content */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
-          <div className="mb-8">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 space-y-4 sm:space-y-0">
-              <div className="flex items-center space-x-4">
-                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl">
-                  <span className="text-2xl">{tabs.find(tab => tab.id === activeTab)?.icon || '📊'}</span>
-                </div>
-                <div>
-                  <h2 className="text-3xl sm:text-4xl font-black text-gray-900 capitalize tracking-tight">
-                    {tabs.find(tab => tab.id === activeTab)?.label || 'Dashboard'}
-                  </h2>
-                  <p className="text-gray-600 mt-1 font-medium">
-                    Manage your Kubernetes resources across AWS, Azure, and GCP
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-4">
-                <button className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-2xl hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-xl flex items-center space-x-2 font-bold">
-                  <span>🔄</span>
-                  <span>Refresh</span>
-                </button>
-                <button className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-2xl hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 shadow-xl flex items-center space-x-2 font-bold">
-                  <span>⚡</span>
-                  <span>Deploy</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Breadcrumb */}
-            <div className="flex items-center space-x-2 text-sm text-gray-500 font-medium">
-              <span>K8s-Dash</span>
-              <span>›</span>
-              <span>{mockTenants.find(t => t.id === currentTenant)?.name.replace(/[^\w\s]/gi, '') || 'Production'}</span>
-              <span>›</span>
-              <span className="text-gray-900 font-bold">
-                {tabs.find(tab => tab.id === activeTab)?.label || 'Dashboard'}
-              </span>
-            </div>
-          </div>
-
-          <div className="space-y-8">
-            {renderContent()}
-          </div>
-        </main>
-      </div>
+      </main>
     </div>
-  );
-}
+  )
+} 

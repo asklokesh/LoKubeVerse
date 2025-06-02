@@ -1,19 +1,23 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useErrorHandler } from './useErrorHandler';
 
-interface Deployment {
+export interface Deployment {
   id: string;
   name: string;
   cluster: string;
   namespace: string;
   image: string;
   status: string;
+  replicas?: number;
+  created?: string;
 }
 
 export const useDeployments = () => {
   const [deployments, setDeployments] = useState<Deployment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { getErrorMessage } = useErrorHandler();
 
   useEffect(() => {
     const fetchDeployments = async () => {
@@ -21,7 +25,8 @@ export const useDeployments = () => {
         const response = await axios.get<Deployment[]>('/api/deployments');
         setDeployments(response.data);
       } catch (err) {
-        setError('Failed to fetch deployments');
+        console.error('Error fetching deployments:', err);
+        setError(getErrorMessage(err, 'Failed to fetch deployments'));
       } finally {
         setLoading(false);
       }
@@ -36,8 +41,9 @@ export const useDeployments = () => {
       setDeployments((prev) => [...prev, response.data]);
       return response.data;
     } catch (err) {
-      setError('Failed to create deployment');
-      throw err;
+      const errorMessage = getErrorMessage(err, 'Failed to create deployment');
+      setError(errorMessage);
+      throw new Error(errorMessage);
     }
   };
 
@@ -46,9 +52,14 @@ export const useDeployments = () => {
       await axios.delete(`/api/deployments/${id}`);
       setDeployments((prev) => prev.filter((deployment) => deployment.id !== id));
     } catch (err) {
-      setError('Failed to delete deployment');
-      throw err;
+      const errorMessage = getErrorMessage(err, 'Failed to delete deployment');
+      setError(errorMessage);
+      throw new Error(errorMessage);
     }
+  };
+
+  const clearError = () => {
+    setError(null);
   };
 
   return {
@@ -57,5 +68,6 @@ export const useDeployments = () => {
     error,
     createDeployment,
     deleteDeployment,
+    clearError
   };
 }; 
