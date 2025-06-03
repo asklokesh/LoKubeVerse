@@ -11,12 +11,27 @@ import crud
 
 app = FastAPI()
 
+# Get allowed origins from environment variable or use default for development
+import os
+from fastapi.middleware.cors import CORSMiddleware
+
+# Default allowed origins for development
+allowed_origins = [
+    "http://localhost:3000",  # Default Next.js dev server
+    "http://frontend:3000",    # Frontend service in Docker
+]
+
+# Add any additional origins from environment variable
+if os.getenv("ALLOWED_ORIGINS"):
+    allowed_origins.extend(os.getenv("ALLOWED_ORIGINS").split(","))
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["Content-Range", "X-Total-Count"],
 )
 
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])

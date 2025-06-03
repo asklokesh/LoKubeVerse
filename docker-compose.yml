@@ -37,6 +37,10 @@ services:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/k8s_dash
       REDIS_URL: redis://redis:6379
       RABBITMQ_URL: amqp://admin:admin123@rabbitmq:5672/
+      ALLOWED_ORIGINS: http://localhost:3000,http://frontend:3000
+      SECRET_KEY: your-secret-key-here
+      ACCESS_TOKEN_EXPIRE_MINUTES: "1440"  # 24 hours
+      ALGORITHM: HS256
     ports:
       - '8000:8000'
     depends_on:
@@ -56,8 +60,11 @@ services:
       - backend
     volumes:
       - ./frontend:/app
+      - /app/node_modules
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://backend:8000/api
+      - NEXT_TELEMETRY_DISABLED=1
 
 volumes:
   pgdata:

@@ -1,0 +1,88 @@
+import { useState, useEffect } from 'react';
+import api from '../config/api';
+import { useErrorHandler } from './useErrorHandler';
+
+export interface Deployment {
+  id: string;
+  name: string;
+  cluster: string;
+  namespace: string;
+  image: string;
+  status: string;
+  replicas?: number;
+  created?: string;
+}
+
+export const useDeployments = () => {
+  const [deployments, setDeployments] = useState<Deployment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { getErrorMessage } = useErrorHandler();
+
+  useEffect(() => {
+    const fetchDeployments = async () => {
+      try {
+        const response = await api.get<Deployment[]>('/deployments');
+        setDeployments(response.data);
+      } catch (err) {
+        console.error('Error fetching deployments:', err);
+        setError(getErrorMessage(err, 'Failed to fetch deployments'));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDeployments();
+  }, []);
+
+  const createDeployment = async (data: Omit<Deployment, 'id' | 'status'>) => {
+    try {
+      const response = await api.post<Deployment>('/deployments', data);
+      setDeployments((prev) => [...prev, response.data]);
+      return response.data;
+    } catch (err) {
+      const errorMessage = getErrorMessage(err, 'Failed to create deployment');
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    }
+  };
+
+  const deleteDeployment = async (id: string) => {
+    try {
+      await api.delete(`/deployments/${id}`);
+      setDeployments((prev) => prev.filter((deployment) => deployment.id !== id));
+    } catch (err) {
+      const errorMessage = getErrorMessage(err, 'Failed to delete deployment');
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    }
+  };
+
+  const updateDeployment = async (id: string, data: Partial<Deployment>) => {
+    try {
+      const response = await api.put<Deployment>(`/deployments/${id}`, data);
+      setDeployments((prev) =>
+        prev.map((deployment) => deployment.id === id ? response.data : deployment)
+      );
+      return response.data;
+    } catch (err) {
+      const errorMessage = getErrorMessage(err, 'Failed to update deployment');
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    }
+  };
+
+  const clearError = () => {
+    setError(null);
+  };
+
+  return {
+    deployments,
+    loading,
+    error,
+    createDeployment,
+    updateDeployment,
+    deleteDeployment,
+    clearError
+  };
+}; 

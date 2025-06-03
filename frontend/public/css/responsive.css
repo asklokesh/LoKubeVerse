@@ -1,0 +1,185 @@
+/* Responsive Design - iOS Inspired */
+
+/* Mobile First Approach */
+/* Mobile (0-767px) */
+@media (max-width: 767px) {
+    .main-content {
+        padding: 16px 12px;
+    }
+
+    .metrics-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .clusters-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .tenant-switcher {
+        display: none;
+    }
+
+    .mdc-top-app-bar__title {
+        font-size: 1.1rem;
+    }
+
+    .auth-container {
+        margin: 20px;
+        padding: 24px;
+    }
+
+    .cost-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .rbac-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .monitoring-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Tablet (768px-1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .main-content {
+        padding: 24px 20px;
+    }
+
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .clusters-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .cost-summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .rbac-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .monitoring-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Desktop (1024px+) */
+@media (min-width: 1024px) {
+    .main-content {
+        padding: 32px;
+    }
+
+    .metrics-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+    }
+
+    .clusters-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+    }
+
+    .cost-summary-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .rbac-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .monitoring-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Large Desktop (1440px+) */
+@media (min-width: 1440px) {
+    .metrics-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+    .clusters-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .monitoring-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* iOS-style Safe Areas */
+@supports (padding: max(0px)) {
+    .main-content {
+        padding-left: max(32px, env(safe-area-inset-left));
+        padding-right: max(32px, env(safe-area-inset-right));
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --surface-color: #1e1e1e;
+        --background-color: #121212;
+        --on-surface: #ffffff;
+        --on-background: #ffffff;
+        --ios-light-gray: #2c2c2e;
+    }
+
+    .metric-card,
+    .cluster-card,
+    .cost-card,
+    .rbac-card,
+    .audit-entry {
+        background-color: var(--surface-color);
+        color: var(--on-surface);
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+
+    .metric-card,
+    .cluster-card,
+    .cost-card {
+        border: 2px solid var(--on-surface);
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Print Styles */
+@media print {
+
+    .mdc-top-app-bar,
+    .mdc-drawer,
+    .auth-modal {
+        display: none !important;
+    }
+
+    .main-content {
+        padding: 0;
+        margin: 0;
+    }
+
+    .metric-card,
+    .cluster-card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}
