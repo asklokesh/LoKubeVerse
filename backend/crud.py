@@ -4,7 +4,7 @@ import schemas
 from uuid import UUID
 from passlib.context import CryptContext
 import uuid
-from sqlalchemy.exc import DataError, SQLAlchemyError
+from sqlalchemy.exc import SQLAlchemyError
 import logging
 from fastapi import HTTPException
 
@@ -23,7 +23,7 @@ def get_tenant(db: Session, tenant_id: str):
         tenant_uuid = UUID(tenant_id)
     except ValueError:
         logger.error(f"Invalid UUID format for tenant_id: {tenant_id}")
-        raise DataError("Invalid UUID format for tenant_id")
+        raise HTTPException(status_code=422, detail="Invalid UUID format for tenant_id")
     try:
         tenant = db.query(Tenant).filter(Tenant.id == tenant_uuid).first()
         if not tenant:
@@ -34,26 +34,50 @@ def get_tenant(db: Session, tenant_id: str):
         raise HTTPException(status_code=500, detail="Database error")
 
 def create_user(db: Session, user: schemas.UserCreate):
+    # Check if user already exists
+    existing_user = db.query(User).filter(User.email == user.email).first()
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    try:
     hashed_password = pwd_context.hash(user.password)
     db_user = User(
         id=str(uuid.uuid4()),
         email=user.email,
-        password=hashed_password
+            username=user.email.split('@')[0],  # Use email prefix as username
+            hashed_password=hashed_password
     )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
+    except SQLAlchemyError as e:
+        db.rollback()
+        logger.error(f"Error creating user: {e}")
+        raise HTTPException(status_code=500, detail="Error creating user")
 
 def get_user(db: Session, user_id: str):
     try:
         user_uuid = UUID(user_id)
     except ValueError:
-        raise DataError("Invalid UUID format for user_id")
+        raise HTTPException(status_code=422, detail="Invalid UUID format for user_id")
     return db.query(User).filter(User.id == user_uuid).first()
 
 def get_user_by_email(db: Session, email: str):
+    """Get user by email address"""
+    try:
     return db.query(User).filter(User.email == email).first()
+    except SQLAlchemyError as e:
+        logger.error(f"Error getting user by email {email}: {e}")
+        return None
+
+def get_user_by_username(db: Session, username: str):
+    """Get user by username"""
+    try:
+        return db.query(User).filter(User.username == username).first()
+    except SQLAlchemyError as e:
+        logger.error(f"Error getting user by username {username}: {e}")
+        return None
 
 def create_cluster(db: Session, cluster: schemas.ClusterCreate, owner_id: str):
     db_cluster = Cluster(
@@ -69,8 +93,10 @@ def create_cluster(db: Session, cluster: schemas.ClusterCreate, owner_id: str):
 def get_cluster(db: Session, cluster_id: str):
     return db.query(Cluster).filter(Cluster.id == cluster_id).first()
 
-def list_clusters(db: Session, tenant_id: UUID):
+def list_clusters(db: Session, tenant_id: UUID = None):
+    if tenant_id:
     return db.query(Cluster).filter(Cluster.tenant_id == tenant_id).all()
+    return db.query(Cluster).all()
 
 def create_namespace(db: Session, ns: schemas.NamespaceCreate):
     db_obj = Namespace(**ns.dict())

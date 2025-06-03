@@ -1,122 +1,121 @@
-from fastapi import APIRouter, HTTPException, Depends, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from pydantic import BaseModel
-from typing import Optional, Dict, Any
-from datetime import datetime, timedelta
-import uuid
+from fastapi import APIRouter, Depends, HTTPException, status, Form
+from fastapi.security import HTTPBearer
+from sqlalchemy.orm import Session
+from db import get_db
+import crud
+import schemas
+from auth_service import AuthService
 
-from auth_service import AuthService, ACCESS_TOKEN_EXPIRE_MINUTES
-
-router = APIRouter(tags=["authentication"])
+router = APIRouter(tags=["auth", "authentication"])
 security = HTTPBearer()
 auth_service = AuthService()
 
 # Pydantic models
-class UserLogin(BaseModel):
-    username: str
-    password: str
+class UserLogin(schemas.UserLogin):
+    pass
 
-class UserRegister(BaseModel):
-    username: str
-    password: str
-    email: str
+class UserRegister(schemas.UserRegister):
+    pass
 
-class TokenResponse(BaseModel):
-    access_token: str
-    token_type: str
-    expires_in: int
+class TokenResponse(schemas.TokenResponse):
+    pass
 
-class UserResponse(BaseModel):
-    user_id: str
-    username: str
-    email: str
-    permissions: list
+class UserResponse(schemas.UserResponse):
+    pass
 
-def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> Dict[str, Any]:
-    """Get current authenticated user from JWT token"""
+@router.post("/login")
+async def login(
+    username: str = Form(...),
+    password: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    """Login with username/email and password"""
     try:
-        payload = auth_service.verify_token(credentials.credentials)
-        username = payload.get("sub")
-        if not username:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid authentication credentials",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-        user = auth_service.get_user_by_username(username)
+        # Try to find user by username first, then by email
+        user = crud.get_user_by_username(db, username)
         if not user:
+            user = crud.get_user_by_email(db, username)
+        
+        if not user or not auth_service.verify_password(password, user.hashed_password):
             raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="User not found",
-                headers={"WWW-Authenticate": "Bearer"},
+                status_code=401,
+                detail="Invalid credentials"
             )
-        return {"username": username, **user}
-    except HTTPException:
-        raise
-    except Exception:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
-@router.post("/login", response_model=TokenResponse)
-async def login(user_login: UserLogin):
-    """Authenticate user and return access token"""
-    user = auth_service.authenticate_user(user_login.username, user_login.password)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = auth_service.create_access_token(
-        data={"sub": user_login.username, "user_id": user["user_id"]},
-        expires_delta=access_token_expires
-    )
+        
+        # Generate access token
+        access_token = auth_service.create_access_token({"sub": user.email})
     
     return {
         "access_token": access_token,
         "token_type": "bearer",
-        "expires_in": ACCESS_TOKEN_EXPIRE_MINUTES * 60
+            "expires_in": 1440  # 24 hours in minutes
     }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/register", status_code=status.HTTP_201_CREATED)
-async def register(user_register: UserRegister):
+@router.post("/register", status_code=201)
+async def register(user: schemas.UserRegister, db: Session = Depends(get_db)):
     """Register a new user"""
     try:
-        result = auth_service.register_user(
-            user_register.username, 
-            user_register.password, 
-            user_register.email
-        )
-        return result
+        # Create user using existing CRUD function
+        user_create = schemas.UserCreate(email=user.email, password=user.password)
+        db_user = crud.create_user(db, user_create)
+        
+        return {
+            "message": "User registered successfully",
+            "user_id": db_user.id,
+            "email": db_user.email
+        }
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Registration failed"
-        )
+        raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/me", response_model=UserResponse)
-async def get_me(current_user: dict = Depends(get_current_user)):
+@router.get("/me")
+async def get_me(
+    credentials: str = Depends(security),
+    db: Session = Depends(get_db)
+):
     """Get current user information"""
-    return {
-        "user_id": current_user["user_id"],
-        "username": current_user["username"],
-        "email": current_user["email"],
-        "permissions": current_user["permissions"]
-    }
+    try:
+        # Extract token from credentials
+        token = credentials.credentials
+        payload = auth_service.decode_access_token(token)
+        email = payload.get("sub")
+        
+        if not email:
+            raise HTTPException(status_code=401, detail="Invalid token")
+        
+        user = crud.get_user_by_email(db, email)
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        return schemas.UserResponse(
+            user_id=user.id,
+            username=user.username,
+            email=user.email,
+            permissions=[]  # TODO: Add actual permissions
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=401, detail="Invalid token")
 
 @router.post("/logout")
 async def logout():
     """Logout user (client should remove token)"""
-    return {"message": "Successfully logged out"}
+    return {"message": "Logged out successfully"}
 
 @router.get("/verify")
-async def verify_token(current_user: dict = Depends(get_current_user)):
+async def verify_token(credentials: str = Depends(security)):
     """Verify if token is valid"""
-    return {"valid": True, "user_id": current_user["user_id"]}
+    try:
+        token = credentials.credentials
+        payload = auth_service.decode_access_token(token)
+        
+        if payload:
+            return {"valid": True, "user": payload.get("sub")}
+        else:
+            raise HTTPException(status_code=401, detail="Invalid token")
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid token")

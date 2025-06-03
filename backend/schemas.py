@@ -14,7 +14,7 @@ class Tenant(TenantBase):
     created_at: datetime
     updated_at: Optional[datetime]
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UserBase(BaseModel):
     email: EmailStr
@@ -24,6 +24,7 @@ class UserCreate(UserBase):
 
 class User(UserBase):
     id: str
+    username: str
     is_active: bool
     created_at: datetime
 
@@ -58,7 +59,7 @@ class Namespace(NamespaceBase):
     created_at: datetime
     updated_at: Optional[datetime]
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class WorkloadBase(BaseModel):
     name: str
@@ -76,7 +77,7 @@ class Workload(WorkloadBase):
     created_at: datetime
     updated_at: Optional[datetime]
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class RBACBase(BaseModel):
     rules: Dict[str, Any]
@@ -90,7 +91,7 @@ class RBAC(RBACBase):
     created_at: datetime
     updated_at: Optional[datetime]
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class QuotaBase(BaseModel):
     spec: Dict[str, Any]
@@ -106,7 +107,7 @@ class Quota(QuotaBase):
     created_at: datetime
     updated_at: Optional[datetime]
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class NetworkPolicyBase(BaseModel):
     spec: Dict[str, Any]
@@ -122,7 +123,7 @@ class NetworkPolicy(NetworkPolicyBase):
     created_at: datetime
     updated_at: Optional[datetime]
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class DeploymentBase(BaseModel):
     name: str
@@ -140,7 +141,7 @@ class Deployment(DeploymentBase):
     created_at: datetime
     updated_at: Optional[datetime]
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class AuditLogBase(BaseModel):
     action: str
@@ -157,7 +158,7 @@ class AuditLog(AuditLogBase):
     user_id: UUID
     created_at: datetime
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class CostBase(BaseModel):
     amount: float
@@ -174,4 +175,28 @@ class Cost(CostBase):
     namespace_id: Optional[UUID]
     created_at: datetime
     class Config:
-        orm_mode = True
+        from_attributes = True
+
+# Authentication schemas
+class UserLogin(UserBase):
+    username: str
+    password: str
+
+class UserRegister(BaseModel):
+    username: str
+    password: str
+    email: EmailStr
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str
+    expires_in: int
+
+class UserResponse(BaseModel):
+    user_id: str
+    username: str
+    email: str
+    permissions: List[str] = []
+
+    class Config:
+        from_attributes = True

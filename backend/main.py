@@ -128,6 +128,7 @@ def list_clusters_api(db: Session = Depends(get_db)):
             ]
         }
     except Exception as e:
+        logger.error(f"Error listing clusters: {e}")
         return {"success": False, "error": str(e)}
 
 @app.get("/api/clusters/{cluster_id}/metrics")

@@ -5,40 +5,42 @@ import yaml
 import json
 import logging
 from datetime import datetime
+import os
 
 logger = logging.getLogger(__name__)
 
 class K8sService:
     """Service for interacting with Kubernetes clusters"""
     
-    def __init__(self, kubeconfig_path: Optional[str] = None):
-        """Initialize Kubernetes service
-        
-        Args:
-            kubeconfig_path: Path to kubeconfig file, if None uses default
-        """
+    def __init__(self):
         try:
-            if kubeconfig_path:
-                config.load_kube_config(config_file=kubeconfig_path)
-            else:
-                # Try in-cluster config first, then local kubeconfig
+            config.load_kube_config()
+            logger.info("Loaded kubernetes config from kubeconfig")
+        except Exception as e:
+            logger.warning(f"Could not load Kubernetes config: {e}")
                 try:
                     config.load_incluster_config()
-                except config.ConfigException:
-                    config.load_kube_config()
-            
+                logger.info("Loaded in-cluster kubernetes config")
+            except Exception as e2:
+                logger.warning(f"Could not load in-cluster config: {e2}")
+                # Create a mock client for development
+                self._use_mock = True
+                logger.info("Using mock k8s client for development")
+                return
+        
+        self._use_mock = False
             self.v1 = client.CoreV1Api()
             self.apps_v1 = client.AppsV1Api()
             self.networking_v1 = client.NetworkingV1Api()
             self.rbac_v1 = client.RbacAuthorizationV1Api()
             
-        except Exception as e:
-            logger.warning(f"Could not load Kubernetes config: {e}")
-            # For testing/development, create mock clients
-            self.v1 = None
-            self.apps_v1 = None
-            self.networking_v1 = None
-            self.rbac_v1 = None
+    def _mock_response(self, resource_type="mock"):
+        """Return mock data for development when k8s is not available"""
+        return {
+            "status": "success",
+            "data": {"message": f"Mock {resource_type} response - k8s not available"},
+            "mock": True
+        }
     
     def is_connected(self) -> bool:
         """Check if connected to Kubernetes cluster"""
@@ -52,6 +54,8 @@ class K8sService:
     
     def get_cluster_info(self) -> Dict[str, Any]:
         """Get basic cluster information"""
+        if self._use_mock:
+            return self._mock_response("cluster_info")
         if not self.is_connected():
             return {"status": "disconnected", "mock": True}
             
@@ -82,6 +86,8 @@ class K8sService:
     
     def get_namespaces(self) -> List[Dict[str, Any]]:
         """Get all namespaces"""
+        if self._use_mock:
+            return self._mock_response("namespaces")
         if not self.is_connected():
             return self._mock_namespaces()
             
@@ -102,6 +108,8 @@ class K8sService:
     
     def get_pods(self, namespace: Optional[str] = None) -> List[Dict[str, Any]]:
         """Get pods in cluster or specific namespace"""
+        if self._use_mock:
+            return self._mock_pods()
         if not self.is_connected():
             return self._mock_pods()
             
@@ -131,6 +139,8 @@ class K8sService:
     
     def get_services(self, namespace: Optional[str] = None) -> List[Dict[str, Any]]:
         """Get services in cluster or specific namespace"""
+        if self._use_mock:
+            return self._mock_services()
         if not self.is_connected():
             return self._mock_services()
             
@@ -166,6 +176,8 @@ class K8sService:
     
     def get_deployments(self, namespace: Optional[str] = None) -> List[Dict[str, Any]]:
         """Get deployments in cluster or specific namespace"""
+        if self._use_mock:
+            return self._mock_deployments()
         if not self.is_connected():
             return self._mock_deployments()
             
@@ -195,6 +207,8 @@ class K8sService:
     
     def get_cluster_metrics(self) -> Dict[str, Any]:
         """Get cluster resource metrics"""
+        if self._use_mock:
+            return self._mock_metrics()
         if not self.is_connected():
             return self._mock_metrics()
             

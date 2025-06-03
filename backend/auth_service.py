@@ -1,15 +1,17 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from typing import Optional, Dict, Any
 import jwt
 import hashlib
 from fastapi import HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from passlib.context import CryptContext
 
 JWT_SECRET = "your-super-secret-jwt-key-change-in-production"
 JWT_ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 1440  # 24 hours
 
 security = HTTPBearer()
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 class AuthService:
     """Authentication service for handling JWT tokens and user auth"""
@@ -37,23 +39,23 @@ class AuthService:
         }
     }
     
-    def verify_password(self, plain_password: str, username: str) -> bool:
-        """Verify password against stored hash"""
-        if username not in self.MOCK_USERS:
-            return False
-        stored_hash = self.MOCK_USERS[username]["password_hash"]
-        password_hash = hashlib.sha256(plain_password.encode()).hexdigest()
-        return stored_hash == password_hash
+    def verify_password(self, plain_password: str, hashed_password: str) -> bool:
+        """Verify password against stored hash using bcrypt"""
+        return pwd_context.verify(plain_password, hashed_password)
+    
+    def hash_password(self, password: str) -> str:
+        """Hash password using bcrypt"""
+        return pwd_context.hash(password)
     
     def create_access_token(self, data: Dict[str, Any], expires_delta: Optional[timedelta] = None) -> str:
         """Create JWT access token"""
         to_encode = data.copy()
         if expires_delta:
-            expire = datetime.utcnow() + expires_delta
+            expire = datetime.now(UTC) + expires_delta
         else:
-            expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+            expire = datetime.now(UTC) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         
-        to_encode.update({"exp": expire, "iat": datetime.utcnow()})
+        to_encode.update({"exp": expire, "iat": datetime.now(UTC)})
         encoded_jwt = jwt.encode(to_encode, JWT_SECRET, algorithm=JWT_ALGORITHM)
         return encoded_jwt
     
@@ -77,7 +79,10 @@ class AuthService:
     
     def authenticate_user(self, username: str, password: str) -> Optional[Dict[str, Any]]:
         """Authenticate user with username and password"""
-        if self.verify_password(password, username):
+        if username not in self.MOCK_USERS:
+            return None
+        stored_hash = self.MOCK_USERS[username]["password_hash"]
+        if self.verify_password(password, stored_hash):
             return self.MOCK_USERS[username]
         return None
     
@@ -93,7 +98,7 @@ class AuthService:
                 detail="Username already exists"
             )
         
-        password_hash = hashlib.sha256(password.encode()).hexdigest()
+        password_hash = self.hash_password(password)
         user_id = f"{username}-{len(self.MOCK_USERS) + 1:03d}"
         
         self.MOCK_USERS[username] = {
@@ -113,3 +118,21 @@ class AuthService:
     def get_current_user(self, credentials: HTTPAuthorizationCredentials = Depends(security)) -> Dict[str, Any]:
         """FastAPI dependency to get current authenticated user"""
         return self.verify_token(credentials.credentials)
+    
+    def decode_access_token(self, token: str) -> Dict[str, Any]:
+        """Decode and validate JWT access token"""
+        try:
+            payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+            return payload
+        except jwt.ExpiredSignatureError:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token expired",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        except jwt.JWTError:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Could not validate credentials",
+                headers={"WWW-Authenticate": "Bearer"},
+            )

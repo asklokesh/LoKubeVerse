@@ -23,8 +23,10 @@ class User(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     tenant_id = Column(UUID(as_uuid=True), ForeignKey('tenants.id'))
     email = Column(String, unique=True, nullable=False)
-    password = Column(String, nullable=False)  # encrypted
+    username = Column(String, unique=True, nullable=False)
+    hashed_password = Column(String, nullable=False)  # encrypted
     role = Column(String, default='user')
+    is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
     clusters = relationship("Cluster", back_populates="owner")
