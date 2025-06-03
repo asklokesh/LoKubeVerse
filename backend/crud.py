@@ -4,8 +4,12 @@ import schemas
 from uuid import UUID
 from passlib.context import CryptContext
 import uuid
+from sqlalchemy.exc import DataError, SQLAlchemyError
+import logging
+from fastapi import HTTPException
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+logger = logging.getLogger(__name__)
 
 def create_tenant(db: Session, tenant: schemas.TenantCreate):
     db_obj = Tenant(name=tenant.name)
@@ -14,8 +18,20 @@ def create_tenant(db: Session, tenant: schemas.TenantCreate):
     db.refresh(db_obj)
     return db_obj
 
-def get_tenant(db: Session, tenant_id: UUID):
-    return db.query(Tenant).filter(Tenant.id == tenant_id).first()
+def get_tenant(db: Session, tenant_id: str):
+    try:
+        tenant_uuid = UUID(tenant_id)
+    except ValueError:
+        logger.error(f"Invalid UUID format for tenant_id: {tenant_id}")
+        raise DataError("Invalid UUID format for tenant_id")
+    try:
+        tenant = db.query(Tenant).filter(Tenant.id == tenant_uuid).first()
+        if not tenant:
+            logger.warning(f"Tenant not found for ID: {tenant_id}")
+        return tenant
+    except SQLAlchemyError as e:
+        logger.error(f"Database error while fetching tenant: {e}")
+        raise HTTPException(status_code=500, detail="Database error")
 
 def create_user(db: Session, user: schemas.UserCreate):
     hashed_password = pwd_context.hash(user.password)
@@ -30,7 +46,11 @@ def create_user(db: Session, user: schemas.UserCreate):
     return db_user
 
 def get_user(db: Session, user_id: str):
-    return db.query(User).filter(User.id == user_id).first()
+    try:
+        user_uuid = UUID(user_id)
+    except ValueError:
+        raise DataError("Invalid UUID format for user_id")
+    return db.query(User).filter(User.id == user_uuid).first()
 
 def get_user_by_email(db: Session, email: str):
     return db.query(User).filter(User.email == email).first()
@@ -106,4 +126,4 @@ def create_cost(db: Session, cost: schemas.CostCreate):
     db.add(db_obj)
     db.commit()
     db.refresh(db_obj)
-    return db_obj 
+    return db_obj

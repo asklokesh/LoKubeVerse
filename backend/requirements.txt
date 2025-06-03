@@ -6,4 +6,13 @@ pika
 sqlalchemy
 alembic
 passlib[bcrypt]
-python-jose[cryptography] 
+python-jose[cryptography]
+kubernetes
+boto3
+azure-mgmt-containerservice
+azure-identity
+google-cloud-container
+prometheus-client
+pydantic[email]
+requests
+websockets 

@@ -1,7 +1,0 @@
-{
-    "id": "user-1",
-    "email": "test@example.com",
-    "name": "Test User",
-    "role": "admin",
-    "tenantId": "tenant-1"
-}

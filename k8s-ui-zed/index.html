@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudK8s - Multi-Cloud Kubernetes Management</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <nav class="top-nav">
+        <div class="nav-container">
+            <div class="nav-left">
+                <div class="logo">
+                    <i class="fas fa-cloud"></i>
+                    <span>CloudK8s</span>
+                </div>
+                <div class="tenant-switcher">
+                    <select id="tenantSelect">
+                        <option value="acme-corp">Acme Corp</option>
+                        <option value="tech-startup">Tech Startup</option>
+                        <option value="enterprise">Enterprise</option>
+                    </select>
+                </div>
+            </div>
+            <div class="nav-right">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search clusters, pods, services...">
+                </div>
+                <div class="notification-bell">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </div>
+                <div class="user-menu">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiM2MjY2RjEiLz4KPHR2eCB4PSI4IiB5PSIxMiIgd2lkdGg9IjE2IiBoZWlnaHQ9IjgiIHJ4PSI0IiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K" alt="User">
+                    <span>John Smith</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-content">
+                <nav class="main-nav">
+                    <div class="nav-section">
+                        <h3>Overview</h3>
+                        <ul>
+                            <li><a href="#dashboard" class="nav-item active" data-tab="dashboard">
+                                <i class="fas fa-chart-pie"></i>
+                                <span>Dashboard</span>
+                            </a></li>
+                            <li><a href="#clusters" class="nav-item" data-tab="clusters">
+                                <i class="fas fa-server"></i>
+                                <span>Clusters</span>
+                                <span class="badge">12</span>
+                            </a></li>
+                        </ul>
+                    </div>
+                    <div class="nav-section">
+                        <h3>Management</h3>
+                        <ul>
+                            <li><a href="#namespaces" class="nav-item" data-tab="namespaces">
+                                <i class="fas fa-folder-open"></i>
+                                <span>Namespaces</span>
+                            </a></li>
+                            <li><a href="#workloads" class="nav-item" data-tab="workloads">
+                                <i class="fas fa-boxes"></i>
+                                <span>Workloads</span>
+                            </a></li>
+                            <li><a href="#rbac" class="nav-item" data-tab="rbac">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>RBAC</span>
+                            </a></li>
+                            <li><a href="#quotas" class="nav-item" data-tab="quotas">
+                                <i class="fas fa-tachometer-alt"></i>
+                                <span>Resource Quotas</span>
+                            </a></li>
+                            <li><a href="#network" class="nav-item" data-tab="network">
+                                <i class="fas fa-network-wired"></i>
+                                <span>Network Policies</span>
+                            </a></li>
+                        </ul>
+                    </div>
+                    <div class="nav-section">
+                        <h3>Deployment</h3>
+                        <ul>
+                            <li><a href="#deployments" class="nav-item" data-tab="deployments">
+                                <i class="fas fa-rocket"></i>
+                                <span>Deployments</span>
+                            </a></li>
+                            <li><a href="#helm" class="nav-item" data-tab="helm">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Helm Charts</span>
+                            </a></li>
+                            <li><a href="#gitops" class="nav-item" data-tab="gitops">
+                                <i class="fab fa-git-alt"></i>
+                                <span>GitOps</span>
+                            </a></li>
+                        </ul>
+                    </div>
+                    <div class="nav-section">
+                        <h3>Observability</h3>
+                        <ul>
+                            <li><a href="#monitoring" class="nav-item" data-tab="monitoring">
+                                <i class="fas fa-chart-line"></i>
+                                <span>Monitoring</span>
+                            </a></li>
+                            <li><a href="#logs" class="nav-item" data-tab="logs">
+                                <i class="fas fa-file-alt"></i>
+                                <span>Logs</span>
+                            </a></li>
+                            <li><a href="#alerts" class="nav-item" data-tab="alerts">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span>Alerts</span>
+                                <span class="badge error">2</span>
+                            </a></li>
+                            <li><a href="#costs" class="nav-item" data-tab="costs">
+                                <i class="fas fa-dollar-sign"></i>
+                                <span>Cost Analysis</span>
+                            </a></li>
+                        </ul>
+                    </div>
+                    <div class="nav-section">
+                        <h3>Administration</h3>
+                        <ul>
+                            <li><a href="#users" class="nav-item" data-tab="users">
+                                <i class="fas fa-users"></i>
+                                <span>User Management</span>
+                            </a></li>
+                            <li><a href="#audit" class="nav-item" data-tab="audit">
+                                <i class="fas fa-clipboard-list"></i>
+                                <span>Audit Logs</span>
+                            </a></li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Dashboard Tab -->
+            <div id="dashboard-tab" class="tab-content active">
+                <div class="page-header">
+                    <h1>Dashboard</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-download"></i>
+                            Export Report
+                        </button>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Add Cluster
+                        </button>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Status Cards -->
+                    <div class="card-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon aws">
+                                <i class="fab fa-aws"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>5</h3>
+                                <p>AWS Clusters</p>
+                                <span class="stat-change positive">+2 this month</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon azure">
+                                <i class="fab fa-microsoft"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>3</h3>
+                                <p>Azure Clusters</p>
+                                <span class="stat-change positive">+1 this month</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon gcp">
+                                <i class="fab fa-google"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>4</h3>
+                                <p>GCP Clusters</p>
+                                <span class="stat-change neutral">No change</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon health">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>99.9%</h3>
+                                <p>Uptime</p>
+                                <span class="stat-change positive">+0.1%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row -->
+                    <div class="charts-row">
+                        <div class="chart-card">
+                            <div class="card-header">
+                                <h3>Resource Usage</h3>
+                                <div class="chart-controls">
+                                    <select>
+                                        <option>Last 24h</option>
+                                        <option>Last 7d</option>
+                                        <option>Last 30d</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="resourceChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <div class="card-header">
+                                <h3>Cost Breakdown</h3>
+                                <div class="total-cost">$2,847/mo</div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="costChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="activity-card">
+                        <div class="card-header">
+                            <h3>Recent Activity</h3>
+                            <a href="#" class="view-all">View All</a>
+                        </div>
+                        <div class="activity-list">
+                            <div class="activity-item">
+                                <div class="activity-icon success">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <p><strong>prod-web-app</strong> deployment successful</p>
+                                    <span class="activity-time">2 minutes ago</span>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon warning">
+                                    <i class="fas fa-exclamation"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <p><strong>staging-cluster</strong> CPU usage high (85%)</p>
+                                    <span class="activity-time">15 minutes ago</span>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon info">
+                                    <i class="fas fa-info"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <p>New user <strong>sarah@company.com</strong> added</p>
+                                    <span class="activity-time">1 hour ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clusters Tab -->
+            <div id="clusters-tab" class="tab-content">
+                <div class="page-header">
+                    <h1>Clusters</h1>
+                    <div class="header-actions">
+                        <div class="filter-group">
+                            <select class="filter-select">
+                                <option>All Providers</option>
+                                <option>AWS</option>
+                                <option>Azure</option>
+                                <option>GCP</option>
+                            </select>
+                            <select class="filter-select">
+                                <option>All Regions</option>
+                                <option>us-east-1</option>
+                                <option>us-west-2</option>
+                                <option>eu-west-1</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Create Cluster
+                        </button>
+                    </div>
+                </div>
+
+                <div class="clusters-grid">
+                    <div class="cluster-card aws">
+                        <div class="cluster-header">
+                            <div class="cluster-info">
+                                <div class="cluster-provider">
+                                    <i class="fab fa-aws"></i>
+                                    <span>AWS EKS</span>
+                                </div>
+                                <h3>production-cluster</h3>
+                                <p>us-east-1</p>
+                            </div>
+                            <div class="cluster-status running">
+                                <i class="fas fa-circle"></i>
+                                Running
+                            </div>
+                        </div>
+                        <div class="cluster-metrics">
+                            <div class="metric">
+                                <span class="metric-label">Nodes</span>
+                                <span class="metric-value">12</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Pods</span>
+                                <span class="metric-value">247</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">CPU</span>
+                                <span class="metric-value">67%</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Memory</span>
+                                <span class="metric-value">72%</span>
+                            </div>
+                        </div>
+                        <div class="cluster-actions">
+                            <button class="btn btn-secondary btn-sm">Scale</button>
+                            <button class="btn btn-secondary btn-sm">Manage</button>
+                            <button class="btn btn-danger btn-sm">Delete</button>
+                        </div>
+                    </div>
+
+                    <div class="cluster-card azure">
+                        <div class="cluster-header">
+                            <div class="cluster-info">
+                                <div class="cluster-provider">
+                                    <i class="fab fa-microsoft"></i>
+                                    <span>Azure AKS</span>
+                                </div>
+                                <h3>staging-cluster</h3>
+                                <p>eastus</p>
+                            </div>
+                            <div class="cluster-status running">
+                                <i class="fas fa-circle"></i>
+                                Running
+                            </div>
+                        </div>
+                        <div class="cluster-metrics">
+                            <div class="metric">
+                                <span class="metric-label">Nodes</span>
+                                <span class="metric-value">6</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Pods</span>
+                                <span class="metric-value">89</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">CPU</span>
+                                <span class="metric-value">45%</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Memory</span>
+                                <span class="metric-value">38%</span>
+                            </div>
+                        </div>
+                        <div class="cluster-actions">
+                            <button class="btn btn-secondary btn-sm">Scale</button>
+                            <button class="btn btn-secondary btn-sm">Manage</button>
+                            <button class="btn btn-danger btn-sm">Delete</button>
+                        </div>
+                    </div>
+
+                    <div class="cluster-card gcp">
+                        <div class="cluster-header">
+                            <div class="cluster-info">
+                                <div class="cluster-provider">
+                                    <i class="fab fa-google"></i>
+                                    <span>Google GKE</span>
+                                </div>
+                                <h3>dev-cluster</h3>
+                                <p>us-central1</p>
+                            </div>
+                            <div class="cluster-status stopped">
+                                <i class="fas fa-circle"></i>
+                                Stopped
+                            </div>
+                        </div>
+                        <div class="cluster-metrics">
+                            <div class="metric">
+                                <span class="metric-label">Nodes</span>
+                                <span class="metric-value">3</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Pods</span>
+                                <span class="metric-value">0</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">CPU</span>
+                                <span class="metric-value">0%</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Memory</span>
+                                <span class="metric-value">0%</span>
+                            </div>
+                        </div>
+                        <div class="cluster-actions">
+                            <button class="btn btn-primary btn-sm">Start</button>
+                            <button class="btn btn-secondary btn-sm">Manage</button>
+                            <button class="btn btn-danger btn-sm">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workloads Tab -->
+            <div id="workloads-tab" class="tab-content">
+                <div class="page-header">
+                    <h1>Workloads</h1>
+                    <div class="header-actions">
+                        <div class="filter-group">
+                            <select class="filter-select">
+                                <option>All Namespaces</option>
+                                <option>default</option>
+                                <option>kube-system</option>
+                                <option>production</option>
+                            </select>
+                            <select class="filter-select">
+                                <option>All Types</option>
+                                <option>Deployments</option>
+                                <option>StatefulSets</option>
+                                <option>DaemonSets</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Deploy Workload
+                        </button>
+                    </div>
+                </div>
+
+                <div class="workloads-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Namespace</th>
+                                <th>Replicas</th>
+                                <th>Status</th>
+                                <th>Age</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="workload-name">
+                                        <i class="fas fa-cube"></i>
+                                        web-frontend
+                                    </div>
+                                </td>
+                                <td><span class="type-badge deployment">Deployment</span></td>
+                                <td>production</td>
+                                <td>3/3</td>
+                                <td><span class="status-badge running">Running</span></td>
+                                <td>12d</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon" title="Scale">
+                                            <i class="fas fa-expand-arrows-alt"></i>
+                                        </button>
+                                        <button class="btn-icon" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn-icon" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="workload-name">
+                                        <i class="fas fa-database"></i>
+                                        redis-cache
+                                    </div>
+                                </td>
+                                <td><span class="type-badge statefulset">StatefulSet</span></td>
+                                <td>production</td>
+                                <td>1/1</td>
+                                <td><span class="status-badge running">Running</span></td>
+                                <td>8d</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon" title="Scale">
+                                            <i class="fas fa-expand-arrows-alt"></i>
+                                        </button>
+                                        <button class="btn-icon" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn-icon" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="workload-name">
+                                        <i class="fas fa-cogs"></i>
+                                        log-collector
+                                    </div>
+                                </td>
+                                <td><span class="type-badge daemonset">DaemonSet</span></td>
+                                <td>kube-system</td>
+                                <td>12/12</td>
+                                <td><span class="status-badge running">Running</span></td>
+                                <td>25d</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon" title="Scale">
+                                            <i class="fas fa-expand-arrows-alt"></i>
+                                        </button>
+                                        <button class="btn-icon" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn-icon" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Deployments Tab -->
+            <div id="deployments-tab" class="tab-content">
+                <div class="page-header">
+                    <h1>Deployments</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-history"></i>
+                            Rollback History
+                        </button>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-rocket"></i>
+                            New Deployment
+                        </button>
+                    </div>
+                </div>
+
+                <div class="deployment-strategies">
+                    <div class="strategy-card">
+                        <div class="strategy-header">
+                            <h3>Blue/Green Deployment</h3>
+                            <span class="strategy-status active">Active</span>
+                        </div>
+                        <p>Zero-downtime deployment with instant traffic switching</p>
+                        <div class="strategy-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 100%"></div>
+                            </div>
+                            <span>100% Complete</span>
+                        </div>
+                        <div class="strategy-actions">
+                            <button class="btn btn-primary btn-sm">Configure</button>
+                            <button class="btn btn-secondary btn-sm">View Logs</button>
+                        </div>
+                    </div>
+
+                    <div class="strategy-card">
+                        <div class="strategy-header">
+                            <h3>Canary Deployment</h3>
+                            <span class="strategy-status pending">Pending</span>
+                        </div>
+                        <p>Gradual rollout with traffic splitting and monitoring</p>
+                        <div class="strategy-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill canary" style="width: 25%"></div>
+                            </div>
+                            <span>25% Traffic to Canary</span>
+                        </div>
+                        <div class="strategy-actions">
+                            <button class="btn btn-warning btn-sm">Promote</button>
+                            <button class="btn btn-danger btn-sm">Rollback</button>
+                        </div>
+                    </div>
+
+                    <div class="strategy-card">
+                        <div class="strategy-header">
+                            <h3>Rolling Update</h3>
+                            <span class="strategy-status inactive">Inactive</span>
+                        </div>
+                        <p>Traditional rolling update with configurable batch size</p>
+                        <div class="strategy-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <span>Ready to Deploy</span>
+                        </div>
+                        <div class="strategy-actions">
+                            <button class="btn btn-primary btn-sm">Start</button>
+                            <button class="btn btn-secondary btn-sm">Configure</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="deployment-history">
+                    <h3>Recent Deployments</h3>
+                    <div class="deployment-timeline">
+                        <div class="timeline-item success">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-header">
+                                    <h4>web-app v2.1.4</h4>
+                                    <span class="timeline-time">2 hours ago</span>
+                                </div>
+                                <p>Blue/Green deployment completed successfully</p>
+                                <div class="timeline-tags">
+                                    <span class="tag">production</span>
+                                    <span class="tag">blue-green</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timeline-item warning">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-header">
+                                    <h4>api-service v1.8.2</h4>
+                                    <span class="timeline-time">1 day ago</span>
+                                </div>
+                                <p>Canary deployment rolled back due to high error rate</p>
+                                <div class="timeline-tags">
+                                    <span class="tag">staging</span>
+                                    <span class="tag">canary</span>
+                                    <span class="tag">rollback</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timeline-item success">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-header">
+                                    <h4>database v5.2.1</h4>
+                                    <span class="timeline-time">3 days ago</span>
+                                </div>
+                                <p>Rolling update completed with zero downtime</p>
+                                <div class="timeline-tags">
+                                    <span class="tag">production</span>
+                                    <span class="tag">rolling</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monitoring Tab -->
+            <div id="monitoring-tab" class="tab-content">
+                <div class="page-header">
+                    <h1>Monitoring</h1>
+                    <div class="header-actions">
+                        <div class="time-range-selector">
+                            <button class="time-btn active">1h</button>
+                            <button class="time-btn">6h</button>
+                            <button class="time-btn">24h</button>
+                            <button class="time-btn">7d</button>
+                        </div>
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-download"></i>
+                            Export Metrics
+                        </button>
+                    </div>
+                </div>
+
+                <div class="monitoring-grid">
+                    <div class="metric-cards">
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <h4>CPU Usage</h4>
+                                <span class="metric-value">67.3%</span>
+                            </div>
+                            <div class="metric-chart">
+                                <canvas id="cpuChart"></canvas>
+                            </div>
+                            <div class="metric-status normal">Normal</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <h4>Memory Usage</h4>
+                                <span class="metric-value">72.1%</span>
+                            </div>
+                            <div class="metric-chart">
+                                <canvas id="memoryChart"></canvas>
+                            </div>
+                            <div class="metric-status warning">High</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <h4>Network I/O</h4>
+                                <span class="metric-value">145 MB/s</span>
+                            </div>
+                            <div class="metric-chart">
+                                <canvas id="networkChart"></canvas>
+                            </div>
+                            <div class="metric-status normal">Normal</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <h4>Disk Usage</h4>
+                                <span class="metric-value">45.8%</span>
+                            </div>
+                            <div class="metric-chart">
+                                <canvas id="diskChart"></canvas>
+                            </div>
+                            <div class="metric-status normal">Normal</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cost Analysis Tab -->
+            <div id="costs-tab" class="tab-content">
+                <div class="page-header">
+                    <h1>Cost Analysis</h1>
+                    <div class="header-actions">
+                        <div class="time-range-selector">
+                            <button class="time-btn active">This Month</button>
+                            <button class="time-btn">Last Month</button>
+                            <button class="time-btn">Last 3 Months</button>
+                            <button class="time-btn">This Year</button>
+                        </div>
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-download"></i>
+                            Export Report
+                        </button>
+                    </div>
+                </div>
+
+                <div class="cost-overview">
+                    <div class="cost-cards">
+                        <div class="cost-card aws">
+                            <div class="cost-header">
+                                <i class="fab fa-aws"></i>
+                                <h3>AWS Costs</h3>
+                            </div>
+                            <div class="cost-amount">$1,245</div>
+                            <div class="cost-trend positive">+12% from last month</div>
+                        </div>
+                        <div class="cost-card azure">
+                            <div class="cost-header">
+                                <i class="fab fa-microsoft"></i>
+                                <h3>Azure Costs</h3>
+                            </div>
+                            <div class="cost-amount">$897</div>
+                            <div class="cost-trend negative">-5% from last month</div>
+                        </div>
+                        <div class="cost-card gcp">
+                            <div class="cost-header">
+                                <i class="fab fa-google"></i>
+                                <h3>GCP Costs</h3>
+                            </div>
+                            <div class="cost-amount">$705</div>
+                            <div class="cost-trend neutral">No change</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Management Tab -->
+            <div id="users-tab" class="tab-content">
+                <div class="page-header">
+                    <h1>User Management</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-download"></i>
+                            Export Users
+                        </button>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i>
+                            Invite User
+                        </button>
+                    </div>
+                </div>
+
+                <div class="users-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Last Login</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="user-info">
+                                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiM2MjY2RjEiLz4KPHR2eCB4PSI4IiB5PSIxMiIgd2lkdGg9IjE2IiBoZWlnaHQ9IjgiIHJ4PSI0IiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K" alt="User">
+                                        <span>John Smith</span>
+                                    </div>
+                                </td>
+                                <td>john.smith@company.com</td>
+                                <td><span class="role-badge admin">Admin</span></td>
+                                <td><span class="status-badge active">Active</span></td>
+                                <td>2 hours ago</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn-icon" title="Disable">
+                                            <i class="fas fa-ban"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Add additional tabs for namespaces, rbac, quotas, network, helm, gitops, logs, alerts, audit -->
+            <div id="namespaces-tab" class="tab-content">
+                <div class="page-header">
+                    <h1>Namespaces</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Create Namespace
+                        </button>
+                    </div>
+                </div>
+                <!-- Namespace content would go here -->
+            </div>
+
+            <div id="rbac-tab" class="tab-content">
+                <div class="page-header">
+                    <h1>RBAC Management</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Create Role
+                        </button>
+                    </div>
+                </div>
+                <!-- RBAC content would go here -->
+            </div>
+
+            <div id="quotas-tab" class="tab-content">
+                <div class="page-header">
+                    <h1>Resource Quotas</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Create Quota
+                        </button>
+                    </div>
+                </div>
+                <!-- Quotas content would go here -->
+            </div>
+
+            <div id="network-tab" class="tab-content">
+                <div class="page-header">
+                    <h1>Network Policies</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Create Policy
+                        </button>
+                    </div>
+                </div>
+                <!-- Network policies content would go here -->
+            </div>
+
+            <div id="helm-tab" class="tab-content">
+                <div class="page-header">
+                    <h1>Helm Charts</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Install Chart
+                        </button>
+                    </div>
+                </div>
+                <!-- Helm charts content would go here -->
+            </div>
+
+            <div id="gitops-tab" class="tab-content">
+                <div class="page-header">
+                    <h1>GitOps</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Connect Repository
+                        </button>
+                    </div>
+                </div>
+                <!-- GitOps content would go here -->
+            </div>
+
+            <div id="logs-tab" class="tab-content">
+                <div class="page-header">
+                    <h1>Logs</h1>
+                    <div class="header-actions">
+                        <div class="filter-group">
+                            <select class="filter-select">
+                                <option>All Pods</option>
+                                <option>Error Logs Only</option>
+                                <option>Warning Logs</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-download"></i>
+                            Export Logs
+                        </button>
+                    </div>
+                </div>
+                <!-- Logs content would go here -->
+            </div>
+
+            <div id="alerts-tab" class="tab-content">
+                <div class="page-header">
+                    <h1>Alerts</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Create Alert Rule
+                        </button>
+                    </div>
+                </div>
+                <!-- Alerts content would go here -->
+            </div>
+
+            <div id="audit-tab" class="tab-content">
+                <div class="page-header">
+                    <h1>Audit Logs</h1>
+                    <div class="header-actions">
+                        <div class="filter-group">
+                            <select class="filter-select">
+                                <option>All Events</option>
+                                <option>Login Events</option>
+                                <option>Cluster Changes</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-download"></i>
+                            Export Audit
+                        </button>
+                    </div>
+                </div>
+                <!-- Audit logs content would go here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Include JavaScript -->
+    <script src="assets/js/app.js"></script>
+    
+    <!-- Modal Styles -->
+    <style>
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: var(--font-size-lg);
+            cursor: pointer;
+            color: var(--gray-500);
+            padding: var(--spacing-sm);
+        }
+
+        .modal-content {
+            padding: var(--spacing-lg);
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: var(--spacing-md);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-base);
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: flex-end;
+            margin-top: var(--spacing-xl);
+        }
+
+        .notification-container {
+            position: fixed;
+            top: 80px;
+            right: var(--spacing-lg);
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .notification {
+            background: var(--white);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            padding: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-width: 300px;
+            border-left: 4px solid var(--primary-blue);
+        }
+
+        .notification-success {
+            border-left-color: var(--success-green);
+        }
+
+        .notification-error {
+            border-left-color: var(--error-red);
+        }
+
+        .notification-warning {
+            border-left-color: var(--warning-orange);
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--gray-500);
+            padding: var(--spacing-xs);
+        }
+
+        .notification-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            width: 320px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .notification-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .notification-header h3 {
+            margin: 0;
+            font-size: var(--font-size-base);
+            font-weight: 600;
+        }
+
+        .mark-all-read {
+            background: none;
+            border: none;
+            color: var(--primary-blue);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+        }
+
+        .notification-list {
+            padding: var(--spacing-md);
+        }
+
+        .notification-item {
+            display: flex;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .notification-item.unread {
+            background: var(--gray-100);
+        }
+
+        .notification-footer {
+            padding: var(--spacing-md);
+            border-top: 1px solid var(--gray-200);
+            text-align: center;
+        }
+
+        .notification-footer a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-size: var(--font-size-sm);
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            width: 280px;
+            z-index: 1000;
+        }
+
+        .user-dropdown-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .user-dropdown-header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .user-dropdown-header h4 {
+            margin: 0;
+            font-size: var(--font-size-base);
+            font-weight: 600;
+        }
+
+        .user-dropdown-header p {
+            margin: 0;
+            font-size: var(--font-size-sm);
+            color: var(--gray-500);
+        }
+
+        .user-dropdown-menu {
+            padding: var(--spacing-sm);
+        }
+
+        .user-dropdown-menu a {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            text-decoration: none;
+            color: var(--gray-700);
+            border-radius: var(--radius-md);
+            transition: background-color 0.2s ease;
+        }
+
+        .user-dropdown-menu a:hover {
+            background: var(--gray-100);
+        }
+
+        .user-dropdown-menu a.logout {
+            color: var(--error-red);
+        }
+
+        .user-dropdown-menu hr {
+            border: none;
+            border-top: 1px solid var(--gray-200);
+            margin: var(--spacing-sm) 0;
+        }
+
+        .cost-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .cost-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-md);
+            border-left: 4px solid;
+        }
+
+        .cost-card.aws {
+            border-left-color: var(--aws-orange);
+        }
+
+        .cost-card.azure {
+            border-left-color: var(--azure-blue);
+        }
+
+        .cost-card.gcp {
+            border-left-color: var(--gcp-blue);
+        }
+
+        .cost-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .cost-header h3 {
+            margin: 0;
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+        }
+
+        .cost-amount {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .cost-trend {
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+        }
+
+        .cost-trend.positive {
+            color: var(--error-red);
+        }
+
+        .cost-trend.negative {
+            color: var(--success-green);
+        }
+
+        .cost-trend.neutral {
+            color: var(--gray-500);
+        }
+
+        .users-table {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .user-info img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+
+        .role-badge {
+            padding: 4px var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+        }
+
+        .role-badge.admin {
+            background: rgba(255, 59, 48, 0.1);
+            color: var(--error-red);
+        }
+
+        .status-badge.active {
+            background: rgba(52, 199, 89, 0.1);
+            color: var(--success-green);
+        }
+    </style>
+</body>
+</html>

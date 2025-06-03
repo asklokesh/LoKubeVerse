@@ -6,10 +6,23 @@ import os
 # Use environment variable for database URL with fallback to SQLite for local development
 SQLALCHEMY_DATABASE_URL = os.getenv(
     "DATABASE_URL", 
-    "postgresql://postgres:postgres@db:5432/k8s_dash"
+    "sqlite:///./test.db"  # Use SQLite for testing when not in Docker
 )
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+# If using PostgreSQL, handle connection issues gracefully
+if SQLALCHEMY_DATABASE_URL.startswith("postgresql"):
+    try:
+        # Test connection
+        test_engine = create_engine(SQLALCHEMY_DATABASE_URL)
+        test_engine.connect()
+    except Exception:
+        # Fallback to SQLite for local testing
+        SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
+
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL,
+    connect_args={"check_same_thread": False} if "sqlite" in SQLALCHEMY_DATABASE_URL else {}
+)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()

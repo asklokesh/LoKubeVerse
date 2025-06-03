@@ -174,4 +174,4 @@ class Cost(CostBase):
     namespace_id: Optional[UUID]
     created_at: datetime
     class Config:
-        orm_mode = True 
+        orm_mode = True

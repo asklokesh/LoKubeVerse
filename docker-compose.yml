@@ -8,7 +8,7 @@ services:
       - redis_data:/data
 
   rabbitmq:
-    image: rabbitmq:3.12-management
+    image: rabbitmq:3.12.2-management
     ports:
       - '5672:5672'
       - '15672:15672'
@@ -62,11 +62,11 @@ services:
       - ./frontend:/app
       - /app/node_modules
     environment:
-      - NODE_ENV=development
-      - NEXT_PUBLIC_API_URL=http://backend:8000/api
-      - NEXT_TELEMETRY_DISABLED=1
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: http://localhost:8000/api
+      NEXT_TELEMETRY_DISABLED: 1
 
 volumes:
   pgdata:
   redis_data:
-  rabbitmq_data: 
+  rabbitmq_data:
