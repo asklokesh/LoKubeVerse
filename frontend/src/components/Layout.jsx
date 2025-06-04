@@ -10,11 +10,11 @@ import {
   CurrencyDollarIcon,
   UsersIcon,
   BellIcon,
-  Bars3Icon,
-  XMarkIcon,
-  MagnifyingGlassIcon,
+  MenuIcon as Bars3Icon,
+  XIcon as XMarkIcon,
+  SearchIcon as MagnifyingGlassIcon,
   UserCircleIcon
-} from '@heroicons/react/24/outline'
+} from '@heroicons/react/outline'
 import { authService } from '../services/api'
 import toast, { Toaster } from 'react-hot-toast'
 

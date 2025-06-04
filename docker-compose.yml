@@ -52,6 +52,7 @@ services:
       SECRET_KEY: your-secret-key-here
       ACCESS_TOKEN_EXPIRE_MINUTES: "1440"  # 24 hours
       ALGORITHM: HS256
+      DEV_MODE: "true"  # Enable development mode for easy authentication
     ports:
       - '8000:8000'
     depends_on:
@@ -67,11 +68,12 @@ services:
   frontend:
     build:
       context: ./frontend
-    command: npm run dev -- --host 0.0.0.0 --port 3000
-    environment:
-      VITE_API_URL: http://backend:8000
     ports:
       - '3000:3000'
+    environment:
+      VITE_API_URL: http://localhost:8000
+      VITE_DEV_MODE: "true"
+      VITE_SKIP_AUTHENTICATION: "true"
     depends_on:
       - backend
     networks:

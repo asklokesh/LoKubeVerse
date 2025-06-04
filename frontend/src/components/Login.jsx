@@ -2,18 +2,22 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { 
-  EnvelopeIcon, 
+  MailIcon as EnvelopeIcon, 
   LockClosedIcon,
-  ServerStackIcon,
+  ServerIcon as ServerStackIcon,
   ExclamationCircleIcon
-} from '@heroicons/react/24/outline'
+} from '@heroicons/react/outline'
 import { authService } from '../services/api'
 import toast from 'react-hot-toast'
 
+// Development mode flag
+const DEV_MODE = import.meta.env.VITE_DEV_MODE === 'true'
+const SKIP_AUTHENTICATION = import.meta.env.VITE_SKIP_AUTHENTICATION === 'true'
+
 const Login = () => {
   const navigate = useNavigate()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('demo@k8sdash.com')
+  const [password, setPassword] = useState('demo123')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -24,10 +28,28 @@ const Login = () => {
 
     try {
       await authService.login(email, password)
-      toast.success('Welcome back!')
-      navigate('/')
+      toast.success('Login successful')
+      navigate('/dashboard')
     } catch (err) {
-      setError(err.response?.data?.detail || 'Invalid credentials')
+      console.error('Login error:', err)
+      setError(err.response?.data?.detail || 'Invalid credentials. Please try again.')
+      toast.error(err.response?.data?.detail || 'Login failed')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Auto-login in dev mode if SKIP_AUTHENTICATION is enabled
+  const handleDevLogin = async () => {
+    setLoading(true)
+    try {
+      await authService.login('demo@k8sdash.com', 'demo123')
+      toast.success('Dev mode login successful')
+      navigate('/dashboard')
+    } catch (err) {
+      console.error('Dev login error:', err)
+      setError('Dev login failed. Check console for details.')
+      toast.error('Dev login failed. Check console for details.')
     } finally {
       setLoading(false)
     }
@@ -165,6 +187,24 @@ const Login = () => {
           <p className="text-xs text-ios-gray-600">Email: demo@k8sdash.com</p>
           <p className="text-xs text-ios-gray-600">Password: demo123</p>
         </motion.div>
+
+        {DEV_MODE && (
+          <div className="mt-4 text-center">
+            <button
+              type="button"
+              onClick={handleDevLogin}
+              className="text-sm font-medium text-blue-600 hover:text-blue-500"
+            >
+              Login with demo credentials
+            </button>
+            
+            {SKIP_AUTHENTICATION && (
+              <p className="mt-2 text-xs text-gray-500">
+                Dev mode enabled. You can bypass login with the demo credentials.
+              </p>
+            )}
+          </div>
+        )}
       </motion.div>
     </div>
   )

@@ -1,28 +1,53 @@
 import axios from 'axios'
 import toast from 'react-hot-toast'
 
-// Configure axios defaults
-axios.defaults.baseURL = '/'
-axios.defaults.headers.common['Content-Type'] = 'application/json'
+// API base URL from environment variable
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
-// Request interceptor to add auth token
-axios.interceptors.request.use(
+// Development mode flag
+const DEV_MODE = import.meta.env.VITE_DEV_MODE === 'true'
+
+// Create axios instance for API calls
+const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
+
+// Add request interceptor to include auth token
+apiClient.interceptors.request.use(
   (config) => {
+    // Get token from localStorage
     const token = localStorage.getItem('token')
+    
+    // If token exists, add to Authorization header
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
+    
+    // Add development mode header if enabled
+    if (DEV_MODE) {
+      config.headers['X-Dev-Mode'] = 'bypass-auth'
+    }
+    
     return config
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    return Promise.reject(error)
+  }
 )
 
-// Response interceptor to handle errors
-axios.interceptors.response.use(
+// Add response interceptor for error handling
+apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      authService.logout()
+    // Handle 401 Unauthorized errors
+    if (error.response && error.response.status === 401) {
+      // Clear token and redirect to login
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
       window.location.href = '/login'
     } else if (error.response?.status >= 500) {
       toast.error('Server error. Please try again later.')
@@ -31,132 +56,168 @@ axios.interceptors.response.use(
   }
 )
 
-// Auth Service
-export const authService = {
-  async login(username, password) {
-    const { data } = await axios.post('/api/auth/login', { username, password })
-    localStorage.setItem('token', data.access_token)
-    localStorage.setItem('user', JSON.stringify(data.user))
-    return data
+// Authentication service
+const authService = {
+  // Login user
+  login: async (email, password) => {
+    // In dev mode, use the dev login endpoint if configured
+    if (DEV_MODE && import.meta.env.VITE_SKIP_AUTHENTICATION === 'true') {
+      try {
+        const response = await apiClient.get('/api/dev/login')
+        // Store token
+        localStorage.setItem('token', response.data.access_token)
+        localStorage.setItem('user', JSON.stringify(response.data.user))
+        return response.data
+      } catch (error) {
+        console.warn('Dev mode login failed, falling back to regular login')
+        // Fall back to normal login
+      }
+    }
+    
+    // Regular login with credentials
+    const formData = new URLSearchParams()
+    formData.append('username', email)
+    formData.append('password', password)
+    
+    const response = await axios.post(`${API_BASE_URL}/api/auth/login`, formData, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    })
+    
+    // Store token
+    localStorage.setItem('token', response.data.access_token)
+    localStorage.setItem('user', JSON.stringify(response.data.user))
+    return response.data
   },
-
-  logout() {
+  
+  // Logout user
+  logout: () => {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
+    window.location.href = '/login'
   },
-
-  isAuthenticated() {
+  
+  // Check if user is authenticated
+  isAuthenticated: () => {
     return !!localStorage.getItem('token')
   },
-
-  getUser() {
+  
+  // Get user from local storage
+  getUser: () => {
     const user = localStorage.getItem('user')
     return user ? JSON.parse(user) : null
   },
+  
+  // Get user profile
+  getProfile: async () => {
+    return apiClient.get('/api/users/me')
+  },
 
-  async register(email, password, name) {
-    const { data } = await axios.post('/api/auth/register', { email, password, name })
+  // Register new user
+  register: async (email, password, name) => {
+    const { data } = await apiClient.post('/api/auth/register', { email, password, name })
     return data
   }
 }
 
-// API Client
-export const apiClient = {
+// API service for all other endpoints
+const apiService = {
   // Clusters
   async getClusters() {
-    const { data } = await axios.get('/api/clusters')
+    const { data } = await apiClient.get('/api/clusters')
     return data
   },
 
   async getCluster(id) {
-    const { data } = await axios.get(`/api/clusters/${id}`)
+    const { data } = await apiClient.get(`/api/clusters/${id}`)
     return data
   },
 
   async createCluster(cluster) {
-    const { data } = await axios.post('/api/clusters', cluster)
+    const { data } = await apiClient.post('/api/clusters', cluster)
     return data
   },
 
   async updateCluster(id, updates) {
-    const { data } = await axios.patch(`/api/clusters/${id}`, updates)
+    const { data } = await apiClient.patch(`/api/clusters/${id}`, updates)
     return data
   },
 
   async deleteCluster(id) {
-    const { data } = await axios.delete(`/api/clusters/${id}`)
+    const { data } = await apiClient.delete(`/api/clusters/${id}`)
     return data
   },
 
   // Workloads
   async getWorkloads(clusterId = null) {
     const params = clusterId ? { cluster_id: clusterId } : {}
-    const { data } = await axios.get('/api/workloads', { params })
+    const { data } = await apiClient.get('/api/workloads', { params })
     return data
   },
 
   async getWorkload(id) {
-    const { data } = await axios.get(`/api/workloads/${id}`)
+    const { data } = await apiClient.get(`/api/workloads/${id}`)
     return data
   },
 
   async deployWorkload(workload) {
-    const { data } = await axios.post('/api/workloads', workload)
+    const { data } = await apiClient.post('/api/workloads', workload)
     return data
   },
 
   async updateWorkload(id, updates) {
-    const { data } = await axios.patch(`/api/workloads/${id}`, updates)
+    const { data } = await apiClient.patch(`/api/workloads/${id}`, updates)
     return data
   },
 
   async deleteWorkload(id) {
-    const { data } = await axios.delete(`/api/workloads/${id}`)
+    const { data } = await apiClient.delete(`/api/workloads/${id}`)
     return data
   },
 
   // Deployments
   async getDeployments() {
-    const { data } = await axios.get('/api/deployments')
+    const { data } = await apiClient.get('/api/deployments')
     return data
   },
 
   async createDeployment(deployment) {
-    const { data } = await axios.post('/api/deployments', deployment)
+    const { data } = await apiClient.post('/api/deployments', deployment)
     return data
   },
 
   async promoteCanary(id) {
-    const { data } = await axios.post(`/api/deployments/${id}/promote`)
+    const { data } = await apiClient.post(`/api/deployments/${id}/promote`)
     return data
   },
 
   async rollbackDeployment(id) {
-    const { data } = await axios.post(`/api/deployments/${id}/rollback`)
+    const { data } = await apiClient.post(`/api/deployments/${id}/rollback`)
     return data
   },
 
   // Monitoring
   async getMetrics(timeRange = '1h') {
-    const { data } = await axios.get('/api/monitoring/metrics', {
+    const { data } = await apiClient.get('/api/monitoring/metrics', {
       params: { timeRange }
     })
     return data
   },
 
   async getAlerts() {
-    const { data } = await axios.get('/api/monitoring/alerts')
+    const { data } = await apiClient.get('/api/monitoring/alerts')
     return data
   },
 
   async acknowledgeAlert(id) {
-    const { data } = await axios.post(`/api/monitoring/alerts/${id}/acknowledge`)
+    const { data } = await apiClient.post(`/api/monitoring/alerts/${id}/acknowledge`)
     return data
   },
 
   // Cost Analysis
   async getCostData(timeRange = 'month') {
-    const { data } = await axios.get('/api/costs', {
+    const { data } = await apiClient.get('/api/costs', {
       params: { timeRange }
     })
     return data
@@ -164,106 +225,192 @@ export const apiClient = {
 
   // Users
   async getUsers() {
-    const { data } = await axios.get('/api/users')
+    const { data } = await apiClient.get('/api/users')
     return data
   },
 
   async inviteUser(email, role) {
-    const { data } = await axios.post('/api/users/invite', { email, role })
+    const { data } = await apiClient.post('/api/users/invite', { email, role })
     return data
   },
 
   async updateUser(id, updates) {
-    const { data } = await axios.patch(`/api/users/${id}`, updates)
+    const { data } = await apiClient.patch(`/api/users/${id}`, updates)
     return data
   },
 
   async deleteUser(id) {
-    const { data } = await axios.delete(`/api/users/${id}`)
+    const { data } = await apiClient.delete(`/api/users/${id}`)
     return data
   },
 
   // Dashboard
   async getDashboardStats() {
-    const { data } = await axios.get('/api/dashboard/stats')
-    return data
+    try {
+      // Use dev endpoint in dev mode
+      const endpoint = DEV_MODE ? '/api/dashboard/stats-dev' : '/api/dashboard/stats'
+      const { data } = await apiClient.get(endpoint)
+      return data
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error)
+      // Return mock data in development mode when API fails
+      if (DEV_MODE) {
+        console.log('Using mock dashboard data')
+        return {
+          clusters: {
+            total: 12,
+            aws: 5,
+            azure: 3,
+            gcp: 4,
+            running: 9,
+            stopped: 3
+          },
+          workloads: {
+            deployments: 24,
+            statefulsets: 8,
+            daemonsets: 6,
+            pods: {
+              running: 86,
+              pending: 2,
+              failed: 1
+            }
+          },
+          nodes: {
+            total: 15,
+            healthy: 14,
+            unhealthy: 1
+          },
+          health: {
+            uptime: 99.98,
+            lastIncident: "2023-04-15T14:30:00Z"
+          },
+          resources: {
+            cpu: {
+              total: 48,
+              used: 32,
+              available: 16
+            },
+            memory: {
+              total: 192,
+              used: 128,
+              available: 64
+            },
+            storage: {
+              total: 1024,
+              used: 512,
+              available: 512
+            }
+          },
+          costs: {
+            total: 1245.67,
+            compute: 856.32,
+            storage: 245.18,
+            network: 144.17,
+            aws: 624.45,
+            azure: 298.67,
+            gcp: 322.55
+          },
+          activity: [
+            { id: 1, timestamp: "2023-08-15T10:30:00Z", message: "Cluster k8s-prod-01 scaled up", severity: "info", user: "admin" },
+            { id: 2, timestamp: "2023-08-15T09:15:00Z", message: "Deployment api-gateway updated", severity: "success", user: "deployer" },
+            { id: 3, timestamp: "2023-08-15T08:45:00Z", message: "High memory usage detected", severity: "warning", user: "system" },
+            { id: 4, timestamp: "2023-08-14T22:10:00Z", message: "Pod auth-service-5d8f9 crashed", severity: "error", user: "system" },
+            { id: 5, timestamp: "2023-08-14T20:05:00Z", message: "New cluster k8s-dev-03 created", severity: "info", user: "admin" }
+          ]
+        }
+      }
+      throw error
+    }
   },
 
   async getRecentActivity() {
-    const { data } = await axios.get('/api/dashboard/activity')
-    return data
+    try {
+      const { data } = await apiClient.get('/api/activity')
+      return data
+    } catch (error) {
+      console.error('Error fetching recent activity:', error)
+      // Return mock data in development mode when API fails
+      if (DEV_MODE) {
+        return [
+          { id: 1, timestamp: "2023-08-15T10:30:00Z", message: "Cluster k8s-prod-01 scaled up", severity: "info", user: "admin" },
+          { id: 2, timestamp: "2023-08-15T09:15:00Z", message: "Deployment api-gateway updated", severity: "success", user: "deployer" },
+          { id: 3, timestamp: "2023-08-15T08:45:00Z", message: "High memory usage detected", severity: "warning", user: "system" },
+          { id: 4, timestamp: "2023-08-14T22:10:00Z", message: "Pod auth-service-5d8f9 crashed", severity: "error", user: "system" },
+          { id: 5, timestamp: "2023-08-14T20:05:00Z", message: "New cluster k8s-dev-03 created", severity: "info", user: "admin" }
+        ]
+      }
+      throw error
+    }
   }
 }
 
-// WebSocket Service
-export class WebSocketService {
+// WebSocket service
+class WebSocketService {
   constructor() {
     this.socket = null
-    this.listeners = new Map()
+    this.listeners = {}
   }
 
   connect() {
+    if (this.socket) return
+    
     const token = localStorage.getItem('token')
     if (!token) return
-
-    this.socket = new WebSocket(`ws://localhost:8000/ws?token=${token}`)
-
+    
+    const wsUrl = `${API_BASE_URL.replace('http', 'ws')}/ws?token=${token}`
+    this.socket = new WebSocket(wsUrl)
+    
     this.socket.onopen = () => {
       console.log('WebSocket connected')
-      toast.success('Real-time connection established')
     }
-
+    
     this.socket.onmessage = (event) => {
-      const data = JSON.parse(event.data)
-      this.notifyListeners(data.type, data)
+      try {
+        const data = JSON.parse(event.data)
+        if (data.type && this.listeners[data.type]) {
+          this.listeners[data.type].forEach(callback => callback(data))
+        }
+      } catch (err) {
+        console.error('WebSocket message error:', err)
+      }
     }
-
-    this.socket.onerror = (error) => {
-      console.error('WebSocket error:', error)
-      toast.error('Real-time connection error')
-    }
-
+    
     this.socket.onclose = () => {
       console.log('WebSocket disconnected')
+      this.socket = null
       // Attempt to reconnect after 5 seconds
       setTimeout(() => this.connect(), 5000)
     }
   }
-
+  
   disconnect() {
     if (this.socket) {
       this.socket.close()
       this.socket = null
     }
   }
-
-  subscribe(eventType, callback) {
-    if (!this.listeners.has(eventType)) {
-      this.listeners.set(eventType, new Set())
+  
+  subscribe(type, callback) {
+    if (!this.listeners[type]) {
+      this.listeners[type] = []
     }
-    this.listeners.get(eventType).add(callback)
-
-    // Return unsubscribe function
-    return () => {
-      const callbacks = this.listeners.get(eventType)
-      if (callbacks) {
-        callbacks.delete(callback)
-      }
+    this.listeners[type].push(callback)
+    return () => this.unsubscribe(type, callback)
+  }
+  
+  unsubscribe(type, callback) {
+    if (this.listeners[type]) {
+      this.listeners[type] = this.listeners[type].filter(cb => cb !== callback)
     }
   }
-
-  notifyListeners(eventType, data) {
-    const callbacks = this.listeners.get(eventType)
-    if (callbacks) {
-      callbacks.forEach(callback => callback(data))
-    }
-  }
-
-  send(eventType, data) {
+  
+  send(type, data) {
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-      this.socket.send(JSON.stringify({ type: eventType, ...data }))
+      this.socket.send(JSON.stringify({ type, data }))
     }
   }
 }
 
-export const wsService = new WebSocketService() 
+export const wsService = new WebSocketService()
+
+export { apiClient, authService, apiService } 

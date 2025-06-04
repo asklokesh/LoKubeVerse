@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr, Field
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Union
 from uuid import UUID
 from datetime import datetime
 
@@ -18,20 +18,20 @@ class Tenant(TenantBase):
 
 class UserBase(BaseModel):
     email: EmailStr
+    name: Optional[str] = None
 
-class UserCreate(BaseModel):
-    email: EmailStr
+class UserCreate(UserBase):
     password: str
-    name: str
 
 class User(UserBase):
-    id: str
-    username: str
-    is_active: bool
-    created_at: datetime
+    id: int
+    is_active: bool = True
 
     class Config:
-        from_attributes = True
+        orm_mode = True
+
+class UserInDB(User):
+    hashed_password: str
 
 class ClusterBase(BaseModel):
     name: str
@@ -45,13 +45,72 @@ class ClusterCreate(BaseModel):
     node_count: int
     instance_type: str
 
-class Cluster(ClusterBase):
-    id: str
-    owner_id: str
+class Cluster(BaseModel):
+    id: int
+    name: str
+    provider: str
+    region: str
+    status: str
+    node_count: int
+    instance_type: str
     created_at: datetime
-
+    user_id: int
+    
     class Config:
-        from_attributes = True
+        orm_mode = True
+
+class ClusterStats(BaseModel):
+    total: int
+    aws: int
+    azure: int
+    gcp: int
+    running: int
+    stopped: int
+
+class PodStats(BaseModel):
+    running: int
+    pending: int
+    failed: int
+
+class WorkloadStats(BaseModel):
+    deployments: int
+    statefulsets: int
+    daemonsets: int
+    pods: PodStats
+
+class NodeStats(BaseModel):
+    total: int
+    healthy: int
+    unhealthy: int
+
+class ResourceMetrics(BaseModel):
+    total: int
+    used: int
+    available: int
+
+class ResourceStats(BaseModel):
+    cpu: ResourceMetrics
+    memory: ResourceMetrics
+    storage: ResourceMetrics
+
+class CostStats(BaseModel):
+    total: float
+    compute: float
+    storage: float
+    network: float
+
+class ActivityEvent(BaseModel):
+    timestamp: str
+    event: str
+    user: str
+
+class DashboardStats(BaseModel):
+    clusters: ClusterStats
+    workloads: WorkloadStats
+    nodes: NodeStats
+    resources: ResourceStats
+    costs: CostStats
+    activity: List[ActivityEvent]
 
 class NamespaceBase(BaseModel):
     name: str
@@ -216,7 +275,7 @@ class UserResponse(BaseModel):
 class LoginResponse(BaseModel):
     access_token: str
     token_type: str
-    user: dict
+    user: User
 
 # Cluster schemas
 class ClusterResponse(BaseModel):
@@ -250,9 +309,10 @@ class WorkloadResponse(BaseModel):
     class Config:
         from_attributes = True
 
-# Dashboard schemas
-class DashboardStats(BaseModel):
-    clusters: dict
-    workloads: dict
-    health: dict
-    costs: dict
+# Token schemas
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    email: Optional[str] = None

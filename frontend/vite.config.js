@@ -3,6 +3,10 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  build: {
+    target: 'es2019', // Downgrade target for better browser compatibility
+    sourcemap: true, // Enable source maps for debugging
+  },
   server: {
     port: 3000,
     proxy: {

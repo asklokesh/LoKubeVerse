@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>K8s-Dash Debug Page</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      color: #3182ce;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .success {
+      color: #38a169;
+    }
+    .error {
+      color: #e53e3e;
+    }
+    .warning {
+      color: #dd6b20;
+    }
+    code {
+      background-color: #f7fafc;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #4299e1;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #3182ce;
+    }
+    pre {
+      background-color: #f7fafc;
+      padding: 15px;
+      border-radius: 5px;
+      overflow: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>K8s-Dash Debug Page</h1>
+  
+  <div class="card">
+    <h2>Basic Rendering Test</h2>
+    <p>If you can see this page, the server is correctly serving static files.</p>
+    <div id="basic-test-result" class="success">✓ Basic HTML rendering works</div>
+  </div>
+
+  <div class="card">
+    <h2>JavaScript Test</h2>
+    <p>Testing if JavaScript executes properly:</p>
+    <div id="js-test-result">Loading...</div>
+    <script>
+      document.getElementById('js-test-result').innerHTML = '<span class="success">✓ JavaScript execution works</span>';
+    </script>
+  </div>
+
+  <div class="card">
+    <h2>Environment Variables</h2>
+    <p>Testing access to environment variables:</p>
+    <div id="env-test-result">Checking...</div>
+    <script>
+      try {
+        const envContainer = document.getElementById('env-test-result');
+        envContainer.innerHTML = '<pre>Environment variables not available in plain HTML</pre>';
+        
+        // This is just for demonstration - actual env vars won't be available here
+        envContainer.innerHTML += '<div class="warning">⚠️ For security reasons, environment variables are only accessible in the React application</div>';
+      } catch (error) {
+        document.getElementById('env-test-result').innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+      }
+    </script>
+  </div>
+
+  <div class="card">
+    <h2>API Connection Test</h2>
+    <p>Testing connection to backend API:</p>
+    <div id="api-test-result">Not tested yet</div>
+    <button id="test-api-btn">Test API Connection</button>
+    <script>
+      document.getElementById('test-api-btn').addEventListener('click', async () => {
+        const resultEl = document.getElementById('api-test-result');
+        resultEl.innerHTML = 'Testing connection...';
+        
+        try {
+          const response = await fetch('http://localhost:8000/api/health');
+          if (response.ok) {
+            const data = await response.json();
+            resultEl.innerHTML = `<div class="success">✓ API connection successful: ${JSON.stringify(data)}</div>`;
+          } else {
+            resultEl.innerHTML = `<div class="error">❌ API responded with status: ${response.status}</div>`;
+          }
+        } catch (error) {
+          resultEl.innerHTML = `<div class="error">❌ API connection failed: ${error.message}</div>`;
+        }
+      });
+    </script>
+  </div>
+
+  <div class="card">
+    <h2>Browser Information</h2>
+    <div id="browser-info"></div>
+    <script>
+      const browserInfo = document.getElementById('browser-info');
+      browserInfo.innerHTML = `
+        <ul>
+          <li><strong>User Agent:</strong> ${navigator.userAgent}</li>
+          <li><strong>Browser:</strong> ${navigator.appName}</li>
+          <li><strong>Browser Version:</strong> ${navigator.appVersion}</li>
+          <li><strong>Cookies Enabled:</strong> ${navigator.cookieEnabled}</li>
+          <li><strong>Platform:</strong> ${navigator.platform}</li>
+          <li><strong>Screen Resolution:</strong> ${window.screen.width} x ${window.screen.height}</li>
+          <li><strong>Window Size:</strong> ${window.innerWidth} x ${window.innerHeight}</li>
+        </ul>
+      `;
+    </script>
+  </div>
+
+  <div class="card">
+    <h2>Next Steps</h2>
+    <p>If all tests pass but the main application still shows a blank page:</p>
+    <ol>
+      <li>Check your browser's console for JavaScript errors</li>
+      <li>Verify that React is loading correctly</li>
+      <li>Ensure your environment variables are correctly set</li>
+      <li>Try rebuilding the frontend container</li>
+      <li>Check Docker logs for any errors</li>
+    </ol>
+    <p>Return to <a href="/">main application</a></p>
+  </div>
+</body>
+</html> 

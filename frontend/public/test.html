@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K8s-Dash Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #3182ce;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            background-color: #ebf8ff;
+            border: 1px solid #bee3f8;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        pre {
+            background-color: #f7fafc;
+            padding: 15px;
+            border-radius: 5px;
+            overflow: auto;
+            border: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <h1>K8s-Dash Test Page</h1>
+    <p>This is a simple test page to verify that the web server is functioning correctly.</p>
+
+    <div class="status" id="status">
+        Status: Page loaded successfully!
+    </div>
+
+    <h2>API Connectivity Test</h2>
+    <button onclick="testBackend()">Test Backend Connection</button>
+    <button onclick="testLocalPath()">Test Local Path</button>
+
+    <pre id="result">Results will appear here...</pre>
+
+    <script>
+        // Function to test backend connectivity
+        async function testBackend() {
+            const resultElement = document.getElementById('result');
+            resultElement.textContent = 'Testing backend connection...';
+            
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                resultElement.textContent = 'Backend API Response:\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultElement.textContent = 'Error connecting to backend:\n' + error.message;
+            }
+        }
+
+        // Function to test local path access
+        async function testLocalPath() {
+            const resultElement = document.getElementById('result');
+            resultElement.textContent = 'Testing local path access...';
+            
+            try {
+                const response = await fetch('/index.html');
+                const text = await response.text();
+                const truncated = text.length > 500 ? text.substring(0, 500) + '...' : text;
+                resultElement.textContent = 'Local path response:\n' + truncated;
+            } catch (error) {
+                resultElement.textContent = 'Error accessing local path:\n' + error.message;
+            }
+        }
+
+        // Display environment info
+        document.addEventListener('DOMContentLoaded', () => {
+            const info = {
+                userAgent: navigator.userAgent,
+                windowLocation: window.location.href,
+                referrer: document.referrer || 'None'
+            };
+            
+            document.getElementById('result').textContent = 'Environment Info:\n' + JSON.stringify(info, null, 2);
+        });
+    </script>
+</body>
+</html> 

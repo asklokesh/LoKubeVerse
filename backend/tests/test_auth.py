@@ -9,6 +9,8 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+# Import after setting DEV_MODE to ensure it's available during module loading
+os.environ['DEV_MODE'] = 'true'
 from main import app
 from auth_service import AuthService, JWT_SECRET, JWT_ALGORITHM
 
@@ -102,3 +104,58 @@ class TestAuth:
         data = response.json()
         assert "username" in data
         assert "permissions" in data
+
+def test_dev_login():
+    """Test that the dev login endpoint returns a valid token when DEV_MODE is enabled"""
+    response = client.get('/api/dev/login')
+    assert response.status_code == 200
+    data = response.json()
+    assert 'access_token' in data
+    assert 'token_type' in data
+    assert data['token_type'] == 'bearer'
+    assert 'user' in data
+    assert data['user']['email'] == 'dev@k8sdash.com'
+    
+def test_regular_login_with_valid_credentials():
+    """Test regular login endpoint with valid credentials"""
+    response = client.post(
+        '/api/auth/login',
+        data={'username': 'demo@k8sdash.com', 'password': 'demo123'},
+        headers={'Content-Type': 'application/x-www-form-urlencoded'}
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert 'access_token' in data
+    
+def test_regular_login_with_invalid_credentials():
+    """Test regular login endpoint with invalid credentials"""
+    response = client.post(
+        '/api/auth/login',
+        data={'username': 'wrong@example.com', 'password': 'wrongpass'},
+        headers={'Content-Type': 'application/x-www-form-urlencoded'}
+    )
+    assert response.status_code == 401
+    data = response.json()
+    assert 'detail' in data
+    assert data['detail'] == 'Invalid credentials'
+    
+def test_protected_route_without_token():
+    """Test that a protected route returns 401 without a token"""
+    response = client.get('/api/users/me')
+    assert response.status_code == 401
+    
+def test_protected_route_with_token():
+    """Test that a protected route works with a valid token"""
+    # First get a token
+    login_response = client.get('/api/dev/login')
+    token = login_response.json()['access_token']
+    
+    # Then use it to access a protected route
+    response = client.get(
+        '/api/users/me',
+        headers={'Authorization': f'Bearer {token}'}
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert 'email' in data
+    assert data['email'] == 'dev@k8sdash.com'

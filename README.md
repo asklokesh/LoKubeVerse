@@ -1,198 +1,232 @@
-# K8s Dash - Multi-Cloud Kubernetes Management Platform
+# K8s-Dash: Multi-Cloud Kubernetes Dashboard
 
-<div align="center">
-  <img src="https://img.shields.io/badge/React-18-blue" alt="React">
-  <img src="https://img.shields.io/badge/FastAPI-0.109-green" alt="FastAPI">
-  <img src="https://img.shields.io/badge/TDD-100%25-brightgreen" alt="TDD">
-  <img src="https://img.shields.io/badge/iOS_Design-Inspired-purple" alt="iOS Design">
-</div>
+K8s-Dash is a modern, responsive dashboard for managing Kubernetes clusters across multiple cloud providers.
 
-## 🚀 Quick Start
+## Features
 
-```bash
-# One-command setup
-./install.sh
+- **Multi-cloud management**: AWS, Azure, GCP support
+- **Real-time monitoring**: Resource usage, cluster health
+- **Workload management**: Deploy, scale, and manage workloads
+- **Cost analysis**: Track and optimize Kubernetes spending
+- **User management**: Role-based access control
 
-# Or manual setup
-docker-compose up -d    # Start backend
-cd frontend && npm install && npm run dev    # Start frontend
-```
+## Architecture
 
-**That's it!** Visit http://localhost:3000 and login with:
-- Email: `demo@k8sdash.com`
-- Password: `demo123`
+- **Frontend**: React + Vite + TailwindCSS with iOS-inspired design
+- **Backend**: FastAPI (Python)
+- **Storage**: PostgreSQL database
+- **Messaging**: RabbitMQ for async tasks
+- **Caching**: Redis
 
-## ✨ Features
-
-### 🎨 Beautiful iOS-Inspired UI
-- Glass morphism effects
-- Smooth animations with Framer Motion
-- Responsive design that works everywhere
-- Dark mode support
-
-### 🔌 Full Backend Integration
-- **All APIs Connected**: Every endpoint is wired up and working
-- **Real-time Updates**: WebSocket support for live metrics
-- **Mock Data**: Demo mode with realistic data
-- **Authentication**: JWT-based auth with demo credentials
-
-### 🧪 TDD Approach
-- Tests written first for all components
-- API client fully tested
-- 100% type safety with TypeScript hints
-
-### ⚡ Lightning Fast Development
-- **Vite**: Instant HMR and fast builds
-- **Docker Compose**: One command to run everything
-- **Hot Reload**: Both frontend and backend
-
-## 🏗️ Architecture
-
-```
-k8s-Dash/
-├── frontend/          # React + Vite + Tailwind
-│   ├── src/
-│   │   ├── components/   # React components
-│   │   ├── services/     # API integration
-│   │   └── __tests__/    # Component tests
-│   └── package.json
-│
-├── backend/           # FastAPI + PostgreSQL
-│   ├── main.py       # API endpoints
-│   ├── models.py     # Database models
-│   └── requirements.txt
-│
-└── docker-compose.yml # Full stack setup
-```
-
-## 🛠️ Tech Stack
-
-### Frontend
-- **React 18** - UI library
-- **Vite** - Build tool (super fast!)
-- **Tailwind CSS** - Styling with iOS design system
-- **Framer Motion** - Smooth animations
-- **Axios** - API calls
-- **Vitest** - Testing
-
-### Backend
-- **FastAPI** - Modern Python web framework
-- **PostgreSQL** - Database
-- **Redis** - Caching
-- **WebSockets** - Real-time updates
-- **JWT** - Authentication
-
-## 📱 Features Implemented
-
-### Dashboard ✅
-- Real-time stats
-- Activity timeline
-- Cost breakdown
-- Cloud provider metrics
-
-### Clusters ✅
-- Create/Edit/Delete
-- Filter by provider
-- Real-time status
-- Scale operations
-
-### Authentication ✅
-- JWT tokens
-- Demo mode
-- Protected routes
-- Session management
-
-### API Integration ✅
-- All endpoints connected
-- Error handling
-- Loading states
-- Real-time updates
-
-## 🧪 Testing
-
-```bash
-# Frontend tests
-cd frontend
-npm test              # Run tests
-npm run test:ui       # Test UI
-npm run test:coverage # Coverage report
-
-# Backend tests (coming soon)
-cd backend
-pytest
-```
-
-## 🔧 Development
+## Quick Start
 
 ### Prerequisites
-- Docker & Docker Compose
-- Node.js 18+
+
+- Docker and Docker Compose
 - Git
 
+### Installation
+
+1. Clone the repository
+   ```bash
+   git clone https://github.com/yourusername/k8s-dash.git
+   cd k8s-dash
+   ```
+
+2. Start the application
+   ```bash
+   docker compose up -d
+   ```
+
+3. Access the dashboard
+   - Frontend: http://localhost:3000
+   - API: http://localhost:8000/docs
+
+## Development Setup
+
 ### Environment Variables
-Backend uses these defaults (override in `.env`):
-```env
-DATABASE_URL=postgresql://postgres:postgres@db:5432/k8s_dash
-REDIS_URL=redis://redis:6379
-SECRET_KEY=your-secret-key-here
-ALLOWED_ORIGINS=http://localhost:3000
+
+#### Frontend (.env.local)
+
+```
+VITE_API_URL=http://localhost:8000
+VITE_DEV_MODE=true
+VITE_SKIP_AUTHENTICATION=true
 ```
 
-### API Documentation
-Visit http://localhost:8000/docs for interactive API docs
+#### Backend (.env)
 
-### Adding New Features
-1. Write tests first (TDD)
-2. Keep components simple
-3. Use iOS design patterns
-4. Integrate with existing APIs
+```
+DATABASE_URL=postgresql://postgres:password@db:5432/k8sdash
+SECRET_KEY=development-secret-key
+DEV_MODE=true
+ALLOWED_ORIGINS=http://localhost:3000
+ACCESS_TOKEN_EXPIRE_MINUTES=1440
+```
 
-## 📦 Deployment
+### Development Mode
+
+In development mode, authentication can be bypassed for easier testing:
+
+- Set `DEV_MODE=true` in backend/.env
+- Set `VITE_DEV_MODE=true` and `VITE_SKIP_AUTHENTICATION=true` in frontend/.env.local
+
+### Running Tests
+
+#### Backend Tests
 
 ```bash
-# Build for production
-cd frontend
-npm run build
-
-# Docker production build
-docker-compose -f docker-compose.prod.yml up
+docker compose exec backend pytest
 ```
 
-## 🤝 Contributing
+#### Frontend Tests
 
-1. Fork the repo
-2. Create feature branch (`git checkout -b feature/amazing`)
-3. Write tests first
-4. Commit changes (`git commit -m 'Add amazing feature'`)
-5. Push branch (`git push origin feature/amazing`)
-6. Open Pull Request
+```bash
+docker compose exec frontend npm test
+```
 
-## 📋 Roadmap
+## URL Configuration
 
-- [ ] Kubernetes API integration
-- [ ] Real metrics from clusters
-- [ ] User management
-- [ ] Cost optimization features
-- [ ] Mobile app
+### Frontend URLs
 
-## 🐛 Known Issues
+All frontend routes are client-side using React Router:
 
-- Arrow symbols in JSX need fixing (minor display issue)
-- WebSocket reconnection logic needs improvement
+- `/` - Redirects to dashboard
+- `/login` - Authentication page
+- `/dashboard` - Main dashboard
+- `/clusters` - Cluster management
+- `/workloads` - Workload management
+- `/deployments` - Deployment history and management
+- `/monitoring` - Monitoring and alerts
+- `/costs` - Cost analysis
+- `/users` - User management
 
-## 📄 License
+### Backend API Endpoints
 
-MIT License - see LICENSE file
+Base URL: `http://localhost:8000`
 
-## 🙏 Acknowledgments
+Authentication:
+- POST `/api/auth/login` - Regular login
+- GET `/api/dev/login` - Dev mode login (when DEV_MODE=true)
 
-- Inspired by iOS 18 design language
-- FastAPI for amazing Python web framework
-- React team for the awesome library
+Dashboard:
+- GET `/api/dashboard/stats` - Dashboard statistics
+- GET `/api/activity` - Recent activity
 
----
+Clusters:
+- GET `/api/clusters` - List all clusters
+- GET `/api/clusters/{id}` - Get cluster details
+- POST `/api/clusters` - Create new cluster
+- PATCH `/api/clusters/{id}` - Update cluster
+- DELETE `/api/clusters/{id}` - Delete cluster
 
-<div align="center">
-  Built with ❤️ for speed and simplicity<br>
-  <strong>Star ⭐ this repo if you like it!</strong>
-</div>
+Workloads:
+- GET `/api/workloads` - List all workloads
+- GET `/api/workloads/{id}` - Get workload details
+- POST `/api/workloads` - Deploy new workload
+- PATCH `/api/workloads/{id}` - Update workload
+- DELETE `/api/workloads/{id}` - Delete workload
+
+## Troubleshooting
+
+### Blank Page on Frontend
+
+If you encounter a blank page:
+
+1. Check browser console for errors
+2. Verify environment variables are set correctly
+3. Ensure frontend container is running: `docker compose ps`
+4. Check frontend logs: `docker compose logs frontend`
+5. Try rebuilding the frontend: `docker compose up --build -d frontend`
+6. Ensure paths in index.html are absolute (starting with `/`)
+7. Clear browser cache and reload
+
+#### Solving the Blank Page Issue
+
+The blank page is typically caused by one of these issues:
+
+1. **Path Configuration**:
+   - Make sure your `index.html` uses absolute paths:
+     ```html
+     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+     <script type="module" src="/src/main.jsx"></script>
+     ```
+   - Remove any `base: './'` configuration from `vite.config.js`
+
+2. **Environment Variables**:
+   - Verify the environment variables are being passed correctly:
+     ```bash
+     docker compose exec frontend env | grep VITE
+     ```
+   - Create a `.env.local` file in the frontend directory with the correct variables
+
+3. **JavaScript Errors**:
+   - Access the debug page to test basic functionality:
+     ```
+     http://localhost:3000/debug.html
+     ```
+   - Check browser console for specific React errors
+
+4. **Module Resolution**:
+   - Try clearing node_modules and reinstalling dependencies:
+     ```bash
+     docker compose exec frontend rm -rf node_modules
+     docker compose exec frontend npm install
+     ```
+   - Rebuild the container: `docker compose up --build -d frontend`
+
+5. **Browser Compatibility**:
+   - Try a different browser to rule out browser-specific issues
+   - Update your browser to the latest version
+
+6. **Network Issues**:
+   - Ensure all API requests are going to the correct URL
+   - Check network tab in developer tools for failed requests
+
+### Authentication Issues
+
+1. Verify DEV_MODE is set correctly in both frontend and backend
+2. Check backend logs for authentication errors
+3. Try using the demo credentials: demo@k8sdash.com / demo123
+4. Check that the backend API is accessible: http://localhost:8000/docs
+
+### Database Connection Issues
+
+1. Check if database container is running: `docker compose ps db`
+2. Verify database credentials in backend/.env
+3. Check database logs: `docker compose logs db`
+4. Try restarting the database: `docker compose restart db`
+
+## Path Configuration
+
+When deploying to production, update the following:
+
+1. In `frontend/index.html`, use absolute paths for assets:
+   ```html
+   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+   <script type="module" src="/src/main.jsx"></script>
+   ```
+
+2. In `frontend/vite.config.js`, ensure proper build settings:
+   ```js
+   build: {
+     target: 'es2019',
+     sourcemap: true,
+   }
+   ```
+
+3. Set correct API URL in production:
+   ```
+   VITE_API_URL=https://api.your-domain.com
+   ```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+## License
+
+MIT

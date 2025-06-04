@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { 
-  ArrowPathIcon, 
+  RefreshIcon as ArrowPathIcon, 
   ServerIcon,
   CloudIcon,
   CurrencyDollarIcon,
   HeartIcon,
   CheckCircleIcon,
-  ExclamationTriangleIcon,
+  ExclamationCircleIcon,
   InformationCircleIcon
-} from '@heroicons/react/24/outline'
-import { apiClient } from '../services/api'
+} from '@heroicons/react/outline'
+import { apiService } from '../services/api'
 import { formatDistanceToNow } from 'date-fns'
 
 const StatCard = ({ icon: Icon, title, value, change, bgColor, iconColor }) => (
@@ -47,9 +47,9 @@ const ActivityItem = ({ activity }) => {
       case 'success':
         return <CheckCircleIcon className="w-5 h-5 text-ios-green" />
       case 'warning':
-        return <ExclamationTriangleIcon className="w-5 h-5 text-ios-orange" />
+        return <ExclamationCircleIcon className="w-5 h-5 text-ios-orange" />
       case 'error':
-        return <ExclamationTriangleIcon className="w-5 h-5 text-ios-red" />
+        return <ExclamationCircleIcon className="w-5 h-5 text-ios-red" />
       default:
         return <InformationCircleIcon className="w-5 h-5 text-ios-blue" />
     }
@@ -83,8 +83,8 @@ const Dashboard = () => {
     try {
       setError(null)
       const [statsData, activityData] = await Promise.all([
-        apiClient.getDashboardStats(),
-        apiClient.getRecentActivity()
+        apiService.getDashboardStats(),
+        apiService.getRecentActivity()
       ])
       setStats(statsData)
       setActivity(activityData)
@@ -124,7 +124,7 @@ const Dashboard = () => {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
-          <ExclamationTriangleIcon className="w-12 h-12 text-ios-red mx-auto mb-4" />
+          <ExclamationCircleIcon className="w-12 h-12 text-ios-red mx-auto mb-4" />
           <p className="text-ios-gray-900 font-medium">{error}</p>
           <button 
             onClick={handleRefresh}
