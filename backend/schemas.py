@@ -19,8 +19,10 @@ class Tenant(TenantBase):
 class UserBase(BaseModel):
     email: EmailStr
 
-class UserCreate(UserBase):
+class UserCreate(BaseModel):
+    email: EmailStr
     password: str
+    name: str
 
 class User(UserBase):
     id: str
@@ -36,8 +38,12 @@ class ClusterBase(BaseModel):
     provider: str
     region: str
 
-class ClusterCreate(ClusterBase):
-    kubeconfig: str
+class ClusterCreate(BaseModel):
+    name: str
+    provider: str
+    region: str
+    node_count: int
+    instance_type: str
 
 class Cluster(ClusterBase):
     id: str
@@ -66,9 +72,13 @@ class WorkloadBase(BaseModel):
     spec: Dict[str, Any]
     status: Optional[str]
 
-class WorkloadCreate(WorkloadBase):
-    cluster_id: UUID
-    namespace_id: UUID
+class WorkloadCreate(BaseModel):
+    name: str
+    type: str
+    namespace: str
+    cluster_id: int
+    replicas: int
+    image: str
 
 class Workload(WorkloadBase):
     id: UUID
@@ -193,10 +203,56 @@ class TokenResponse(BaseModel):
     expires_in: int
 
 class UserResponse(BaseModel):
-    user_id: str
-    username: str
+    id: int
     email: str
-    permissions: List[str] = []
-
+    name: str
+    is_active: bool
+    created_at: datetime
+    
     class Config:
         from_attributes = True
+
+# Auth schemas
+class LoginResponse(BaseModel):
+    access_token: str
+    token_type: str
+    user: dict
+
+# Cluster schemas
+class ClusterResponse(BaseModel):
+    id: int
+    name: str
+    provider: str
+    region: str
+    status: str
+    node_count: int
+    instance_type: str
+    created_at: datetime
+    pod_count: Optional[int] = 0
+    cpu_usage: Optional[float] = 0
+    memory_usage: Optional[float] = 0
+    
+    class Config:
+        from_attributes = True
+
+# Workload schemas
+class WorkloadResponse(BaseModel):
+    id: int
+    name: str
+    type: str
+    namespace: str
+    cluster_id: int
+    replicas: int
+    image: str
+    status: str
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+# Dashboard schemas
+class DashboardStats(BaseModel):
+    clusters: dict
+    workloads: dict
+    health: dict
+    costs: dict

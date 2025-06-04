@@ -1,10 +1,10 @@
 import uuid
-from sqlalchemy import Column, String, DateTime, ForeignKey, JSON, Float, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, JSON, Float, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
-import datetime
+from datetime import datetime
 
 Base = declarative_base()
 
@@ -20,29 +20,30 @@ class Tenant(Base):
 
 class User(Base):
     __tablename__ = 'users'
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    tenant_id = Column(UUID(as_uuid=True), ForeignKey('tenants.id'))
-    email = Column(String, unique=True, nullable=False)
-    username = Column(String, unique=True, nullable=False)
-    hashed_password = Column(String, nullable=False)  # encrypted
-    role = Column(String, default='user')
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True)
+    name = Column(String)
+    hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, onupdate=func.now())
-    clusters = relationship("Cluster", back_populates="owner")
+    created_at = Column(DateTime, default=datetime.utcnow)
+    clusters = relationship("Cluster", back_populates="user")
 
 class Cluster(Base):
     __tablename__ = 'clusters'
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    tenant_id = Column(UUID(as_uuid=True), ForeignKey('tenants.id'))
-    name = Column(String, nullable=False)
-    cloud = Column(String, nullable=False)  # aws/azure/gcp
-    config = Column(JSON)  # encrypted
-    status = Column(String)
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, onupdate=func.now())
-    owner_id = Column(UUID(as_uuid=True), ForeignKey("users.id"))
-    owner = relationship("User", back_populates="clusters")
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, index=True)
+    provider = Column(String)  # aws, azure, gcp
+    region = Column(String)
+    status = Column(String, default="provisioning")  # running, stopped, provisioning
+    node_count = Column(Integer)
+    instance_type = Column(String)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    pod_count = Column(Integer, default=0)
+    cpu_usage = Column(Float, default=0)
+    memory_usage = Column(Float, default=0)
+    user = relationship("User", back_populates="clusters")
+    workloads = relationship("Workload", back_populates="cluster")
 
 class Namespace(Base):
     __tablename__ = 'namespaces'
@@ -54,14 +55,16 @@ class Namespace(Base):
 
 class Workload(Base):
     __tablename__ = 'workloads'
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    cluster_id = Column(UUID(as_uuid=True), ForeignKey('clusters.id'))
-    namespace_id = Column(UUID(as_uuid=True), ForeignKey('namespaces.id'))
-    name = Column(String, nullable=False)
-    spec = Column(JSON)
-    status = Column(String)
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, onupdate=func.now())
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, index=True)
+    type = Column(String)  # deployment, statefulset, daemonset
+    namespace = Column(String, default="default")
+    cluster_id = Column(Integer, ForeignKey("clusters.id"))
+    replicas = Column(Integer, default=1)
+    image = Column(String)
+    status = Column(String, default="pending")
+    created_at = Column(DateTime, default=datetime.utcnow)
+    cluster = relationship("Cluster", back_populates="workloads")
 
 class RBAC(Base):
     __tablename__ = 'rbac'
