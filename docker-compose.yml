@@ -6,6 +6,8 @@ services:
     command: redis-server --appendonly yes
     volumes:
       - redis_data:/data
+    networks:
+      - k8s-network
 
   rabbitmq:
     image: rabbitmq:3.12.2-management
@@ -17,6 +19,8 @@ services:
       RABBITMQ_DEFAULT_PASS: admin123
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - k8s-network
 
   db:
     image: postgres:15
@@ -28,6 +32,13 @@ services:
       - '5432:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - k8s-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   backend:
     build:
@@ -44,13 +55,33 @@ services:
     ports:
       - '8000:8000'
     depends_on:
-      - db
-      - redis
-      - rabbitmq
-    volumes:
-      - ./backend:/app
-      
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+    networks:
+      - k8s-network
+
+  frontend:
+    build:
+      context: ./frontend
+    command: npm run dev -- --host 0.0.0.0 --port 3000
+    environment:
+      VITE_API_URL: http://backend:8000
+    ports:
+      - '3000:3000'
+    depends_on:
+      - backend
+    networks:
+      - k8s-network
+
 volumes:
   pgdata:
   redis_data:
   rabbitmq_data:
+
+networks:
+  k8s-network:
+    driver: bridge

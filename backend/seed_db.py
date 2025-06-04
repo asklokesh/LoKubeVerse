@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-"""Database initialization script"""
-
 import logging
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -19,8 +16,8 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def get_password_hash(password):
     return pwd_context.hash(password)
 
-def init_db():
-    # Create all tables
+def seed_db():
+    # Create tables if they don't exist
     Base.metadata.create_all(bind=engine)
     
     # Create session
@@ -47,12 +44,12 @@ def init_db():
             logger.info("Demo user already exists.")
             
     except Exception as e:
-        logger.error(f"Error initializing database: {e}")
+        logger.error(f"Error seeding database: {e}")
         db.rollback()
     finally:
         db.close()
 
 if __name__ == "__main__":
-    logger.info("Initializing database...")
-    init_db()
-    logger.info("Database initialization completed.") 
+    logger.info("Seeding database...")
+    seed_db()
+    logger.info("Database seeding completed.") 

@@ -183,7 +183,7 @@ const Dashboard = () => {
           icon={CurrencyDollarIcon}
           title="Total Cost"
           value={`$${stats?.costs?.total?.toLocaleString() || 0}/mo`}
-          change=null}
+          change={null}
           bgColor="bg-ios-orange/10"
           iconColor="text-ios-orange"
         />
@@ -197,7 +197,7 @@ const Dashboard = () => {
             to="/clusters" 
             className="text-sm font-medium text-ios-blue hover:text-blue-600"
           >
-            View all clusters →
+            {'View all clusters →'}
           </Link>
         </div>
         <div className="grid grid-cols-2 gap-4">
@@ -225,7 +225,7 @@ const Dashboard = () => {
             to="/activity" 
             className="text-sm font-medium text-ios-blue hover:text-blue-600"
           >
-            View all {'\u2192'}
+            {'View all →'}
           </Link>
         </div>
         <div className="space-y-0">

@@ -16,7 +16,7 @@ if ! command -v docker &> /dev/null; then
 fi
 
 # Check if Docker Compose is installed
-if ! command -v docker-compose &> /dev/null; then
+if ! command -v docker compose &> /dev/null; then
     echo -e "${RED}❌ Docker Compose is not installed. Please install Docker Compose first.${NC}"
     exit 1
 fi
@@ -32,7 +32,7 @@ echo ""
 
 # Start backend services
 echo -e "${BLUE}🔧 Starting backend services...${NC}"
-docker-compose up -d
+docker compose up -d
 
 # Wait for services to be ready
 echo -e "${BLUE}⏳ Waiting for services to be ready...${NC}"
@@ -62,7 +62,7 @@ echo "   Email: demo@k8sdash.com"
 echo "   Password: demo123"
 echo ""
 echo "📖 To stop all services:"
-echo "   docker-compose down"
+echo "   docker compose down"
 echo "   Kill the frontend process (or press Ctrl+C in the terminal)"
 echo ""
 echo -e "${BLUE}Happy coding! 🎉${NC}" 

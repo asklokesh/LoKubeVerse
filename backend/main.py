@@ -17,6 +17,7 @@ from schemas import (
     UserCreate, UserResponse, ClusterCreate, ClusterResponse,
     WorkloadCreate, WorkloadResponse, DashboardStats, LoginResponse
 )
+from services.kubernetes_service import KubernetesService
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -96,15 +97,30 @@ def read_root():
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     # Check for demo credentials
     if form_data.username == "demo@k8sdash.com" and form_data.password == "demo123":
-        # Create demo user response
+        # Create or update demo user in database to ensure it exists for subsequent API calls
+        demo_user = db.query(User).filter(User.email == "demo@k8sdash.com").first()
+        if not demo_user:
+            # Create new demo user
+            hashed_password = get_password_hash("demo123")
+            demo_user = User(
+                email="demo@k8sdash.com",
+                name="Demo User",
+                hashed_password=hashed_password,
+                is_active=True
+            )
+            db.add(demo_user)
+            db.commit()
+            db.refresh(demo_user)
+        
+        # Return login response
         access_token = create_access_token(data={"sub": form_data.username})
         return {
             "access_token": access_token,
             "token_type": "bearer",
             "user": {
-                "id": 1,
-                "email": "demo@k8sdash.com",
-                "name": "Demo User"
+                "id": demo_user.id,
+                "email": demo_user.email,
+                "name": demo_user.name
             }
         }
     
@@ -145,9 +161,10 @@ async def register(user: UserCreate, db: Session = Depends(get_db)):
 # Dashboard endpoints
 @app.get("/api/dashboard/stats", response_model=DashboardStats)
 async def get_dashboard_stats(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    # Get clusters from database
     clusters = db.query(Cluster).all()
     
-    # Calculate stats
+    # Calculate stats from database
     total_clusters = len(clusters)
     aws_clusters = len([c for c in clusters if c.provider == "aws"])
     azure_clusters = len([c for c in clusters if c.provider == "azure"])
@@ -155,21 +172,46 @@ async def get_dashboard_stats(current_user: User = Depends(get_current_user), db
     running_clusters = len([c for c in clusters if c.status == "running"])
     stopped_clusters = len([c for c in clusters if c.status == "stopped"])
     
-    # Mock data for demo
+    # Try to use Kubernetes API to get real node count if available
+    k8s_node_count = 0
+    deployment_count = 0
+    statefulset_count = 0
+    daemonset_count = 0
+    pod_count = 0
+    try:
+        service = KubernetesService()
+        nodes = service.list_nodes()
+        if nodes:
+            k8s_node_count = len(nodes)
+            # Get workload counts
+            deployments = service.list_deployments()
+            statefulsets = service.list_stateful_sets()
+            daemonsets = service.list_daemon_sets()
+            pods = service.list_pods()
+            
+            deployment_count = len(deployments)
+            statefulset_count = len(statefulsets)
+            daemonset_count = len(daemonsets)
+            pod_count = len(pods)
+    except Exception as e:
+        # Log error but continue with database stats
+        print(f"Error fetching Kubernetes nodes: {str(e)}")
+    
+    # Use either real data or fallback to mock data if no clusters exist
     return {
         "clusters": {
-            "total": total_clusters or 12,
+            "total": total_clusters or (k8s_node_count if k8s_node_count else 12),
             "aws": aws_clusters or 5,
             "azure": azure_clusters or 3,
             "gcp": gcp_clusters or 4,
-            "running": running_clusters or 10,
+            "running": running_clusters or (k8s_node_count if k8s_node_count else 10),
             "stopped": stopped_clusters or 2
         },
         "workloads": {
-            "total": 47,
-            "deployments": 25,
-            "statefulsets": 12,
-            "daemonsets": 10
+            "total": pod_count or 47,
+            "deployments": deployment_count or 25,
+            "statefulsets": statefulset_count or 12,
+            "daemonsets": daemonset_count or 10
         },
         "health": {
             "uptime": 99.9,

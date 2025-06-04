@@ -1,0 +1,44 @@
+services:
+  # Only run the infrastructure services in Docker
+  # Frontend and backend run locally for better hot-reload experience
+  
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: k8s_dash
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Optional services - uncomment if needed
+  # rabbitmq:
+  #   image: rabbitmq:3.12.2-management
+  #   ports:
+  #     - '5672:5672'
+  #     - '15672:15672'
+  #   environment:
+  #     RABBITMQ_DEFAULT_USER: admin
+  #     RABBITMQ_DEFAULT_PASS: admin123
+  #   volumes:
+  #     - rabbitmq_data:/var/lib/rabbitmq
+      
+volumes:
+  pgdata:
+  redis_data:
+  # rabbitmq_data: 
