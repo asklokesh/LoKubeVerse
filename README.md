@@ -1,5 +1,24 @@
 # K8s-Dash: Multi-Cloud Kubernetes Dashboard
 
+<div align="center">
+
+# Lokubeverse
+
+[![GitHub stars](https://img.shields.io/github/stars/asklokesh/LoKubeVerse?style=social)](https://github.com/asklokesh/LoKubeVerse/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/asklokesh/LoKubeVerse?style=social)](https://github.com/asklokesh/LoKubeVerse/network)
+[![GitHub watchers](https://img.shields.io/github/watchers/asklokesh/LoKubeVerse?style=social)](https://github.com/asklokesh/LoKubeVerse/watchers)
+
+[![License](https://img.shields.io/github/license/asklokesh/LoKubeVerse?style=for-the-badge)](https://github.com/asklokesh/LoKubeVerse/blob/main/LICENSE)
+[![Issues](https://img.shields.io/github/issues/asklokesh/LoKubeVerse?style=for-the-badge)](https://github.com/asklokesh/LoKubeVerse/issues)
+[![Pull Requests](https://img.shields.io/github/issues-pr/asklokesh/LoKubeVerse?style=for-the-badge)](https://github.com/asklokesh/LoKubeVerse/pulls)
+[![Last Commit](https://img.shields.io/github/last-commit/asklokesh/LoKubeVerse?style=for-the-badge)](https://github.com/asklokesh/LoKubeVerse/commits)
+
+[![Commit Activity](https://img.shields.io/github/commit-activity/m/asklokesh/LoKubeVerse?style=flat-square)](https://github.com/asklokesh/LoKubeVerse/pulse)
+[![Code Size](https://img.shields.io/github/languages/code-size/asklokesh/LoKubeVerse?style=flat-square)](https://github.com/asklokesh/LoKubeVerse)
+[![Contributors](https://img.shields.io/github/contributors/asklokesh/LoKubeVerse?style=flat-square)](https://github.com/asklokesh/LoKubeVerse/graphs/contributors)
+
+</div>
+
 K8s-Dash is a modern, responsive dashboard for managing Kubernetes clusters across multiple cloud providers.
 
 ## Features
